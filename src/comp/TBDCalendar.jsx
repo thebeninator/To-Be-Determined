@@ -35,8 +35,15 @@ function TBDCalendar() {
         {MONTHS[month]}, {year}
       </h1>
 
+      <button onClick={() => {
+
+      }}>
+        Go to Today
+      </button>
+
       <Calendar
         // showNavigation = {false} // TODO: custom nav
+        maxDetail="month"
         showNeighboringMonth = {false}
         tileContent = {({view, date}) => {
           if (view === 'month') {

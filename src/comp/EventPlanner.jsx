@@ -26,7 +26,16 @@ function EventPlanner({date, user, updateUser}) {
 
     <button 
       onClick={() => {
-        const success = addEvent(user, new Event("Test", "test", [0, 1500], [], hashDate(date), user.id));
+        const event = new Event(
+          eventName,
+          eventDescription,
+          [0, 1500],
+          [],
+          hashDate(date),
+          user.id
+        );
+        
+        const success = addEvent(user, event);
         if (success) updateUser({...user});       
       }
     }>
