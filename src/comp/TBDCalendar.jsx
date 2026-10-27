@@ -36,7 +36,6 @@ function TBDCalendar() {
       </h1>
 
       <button onClick={() => {
-
       }}>
         Go to Today
       </button>
@@ -68,7 +67,8 @@ function TBDCalendar() {
 
     <div>
       <div>
-        {/* button setup is not very flexible but i think its OK */}
+        {/* this button setup is not very flexible but i think its OK */}
+        {/* because we will not be implementing other views */}
         <button onClick={() => {
           setDayInspectorActive(true);
           setWeeklySchedulerActive(false);

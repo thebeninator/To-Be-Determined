@@ -13,6 +13,7 @@ function getEventsOnDay(user, date) {
     return user.events[maybe_day_key];
   } catch (exception) {
     console.error(exception.message);
+    return null;
   }
 }
 
