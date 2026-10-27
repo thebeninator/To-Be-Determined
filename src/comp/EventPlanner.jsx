@@ -18,7 +18,7 @@ function EventPlanner({date, user, updateUser}) {
   const [eventName, setEventName] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const [eventInvites, setEventInvites] = useState([]);
-  const [eventTimeRange, setEventTimeRange] = useState([-1, -1]);
+  const [eventTimeRange, setEventTimeRange] = useState(["", ""]);
   // const [eventDateHash, setEventDateHash] = useState("");
 
   return (<div>
