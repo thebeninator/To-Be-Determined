@@ -17,10 +17,11 @@ function TimeRangeEntry({timeRange, idx, setter}) {
   return (<>
     <input 
       style={idx == 0 ? fixWidthLeftMargin : fixWidth} 
-      value={hour === -1 ? "" : hour}
+      // value={hour === -1 ? "" : hour}
       placeholder="HH"
-      type="text"
-      inputMode="numeric"
+      type="number"
+      min={0}
+      max={23}
       maxLength={2}
 
       onChange={(event) => {
@@ -32,10 +33,9 @@ function TimeRangeEntry({timeRange, idx, setter}) {
 
     <input 
       style={fixWidth} 
-      value={minute === -1 ? "" : minute}
+      // value={minute === -1 ? "" : minute}
       placeholder="MM"
       type="text"
-      inputMode="numeric"
       maxLength={2}
     />     
   </>)
