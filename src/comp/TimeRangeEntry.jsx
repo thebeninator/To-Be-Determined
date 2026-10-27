@@ -1,36 +1,44 @@
 import { useState } from "react";
 
-const placeholderText = ["Start Time", "End Time"]
-
 const leftMargin = {
   marginLeft: "20px"
-}
+};
+
+const fixWidth = {
+  width: "25px"
+};
+
+const fixWidthLeftMargin = {...leftMargin, ...fixWidth};
 
 function TimeRangeEntry({timeRange, idx, setter}) {
-  const [hour, setHour] = useState(0);
-  const [minute, setMinute] = useState(0);
+  const [hour, setHour] = useState(-1);
+  const [minute, setMinute] = useState(-1);
 
-  return (<input 
-    style = {idx === 0 ? leftMargin : null} 
-    type="text" 
-    value={timeRange[idx]} 
-    placeholder={placeholderText[idx]}
-    maxLength={5}
-    onChange={(event) => {
-      var incomingChar = event.nativeEvent.data;
-      const isDelete = event.nativeEvent.inputType === "deleteContentBackward";
-      const needColon = event.target.value.length == 3 || 
-        (event.target.value.length == 1 && isNaN(Number(incomingChar)));
+  return (<>
+    <input 
+      style={idx == 0 ? fixWidthLeftMargin : fixWidth} 
+      value={hour === -1 ? "" : hour}
+      placeholder="HH"
+      type="text"
+      inputMode="numeric"
+      maxLength={2}
 
-      if (!isDelete && needColon) {
-        incomingChar = ':';
-      }
+      onChange={(event) => {
 
-      const newTimeRange = [...timeRange];
-      newTimeRange[idx] = isDelete ? event.target.value : newTimeRange[0] + incomingChar;
-      setter(newTimeRange);
-    }}
-  />)
+      }}
+    />
+
+    {" : "}
+
+    <input 
+      style={fixWidth} 
+      value={minute === -1 ? "" : minute}
+      placeholder="MM"
+      type="text"
+      inputMode="numeric"
+      maxLength={2}
+    />     
+  </>)
 }
 
 export default TimeRangeEntry;
