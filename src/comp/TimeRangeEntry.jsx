@@ -67,7 +67,7 @@ function TimeRangeEntry({timeRange, idx, setter}) {
           setMinute("00"); 
           return;
         };
-
+        // ex: convert 1 to 01 
         if (minute.length == 1) setMinute(prev => "0" + prev);
       }}
     />     
