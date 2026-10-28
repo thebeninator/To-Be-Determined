@@ -11,10 +11,14 @@ function renderEvents(events, user) {
     events.map((event, idx) => {
       return <div key={idx} style={eventStyle}>
         <h4>
-          {secondsToHHMM(event.timeRange[0])} - {secondsToHHMM(event.timeRange[1])}: {event.name}
+          {secondsToHHMM(event.timeRange[0])} - {secondsToHHMM(event.timeRange[1])}: {event.name === "" ? "Unnamed Event" : event.name}
         </h4>
-        <p>Created by: {user.id === event.createdById ? "You" : event.createdById}</p>        
-        <p style={{whiteSpace: "pre-line"}}>{event.description}</p>
+        
+        <p>Created by: {user.id === event.createdById ? "You" : event.createdById}</p>     
+
+        <p style={{whiteSpace: "pre-line"}}>
+          {event.description === "" ? "No description provided" : event.description}
+        </p>
       </div>
     }) 
   )

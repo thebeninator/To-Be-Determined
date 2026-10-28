@@ -1,42 +1,75 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { HHMMToSeconds } from "../Utility";
 
-const leftMargin = {
-  marginLeft: "20px"
+const fixWidthHour = {
+  width: "25px",
+  textAlign: "right"
 };
 
-const fixWidth = {
-  width: "25px"
+const fixWidthMinute = {
+  width: "25px",
+  textAlign: "left"
 };
 
-const fixWidthLeftMargin = {...leftMargin, ...fixWidth};
+const fixWidthLeftMarginHour = {marginLeft: "20px", ...fixWidthHour};
 
 function TimeRangeEntry({timeRange, idx, setter}) {
-  const [hour, setHour] = useState(-1);
-  const [minute, setMinute] = useState(-1);
+  const [hour, setHour] = useState("");
+  const [minute, setMinute] = useState("");
+
+  function setTimeValue(value, setter, min, max) {
+    if (value === "") {
+      setter("");
+      return;
+    }
+
+    const number = Number(value);
+
+    if (Number.isInteger(number) && number >= min && number <= max) {
+      setter(value);
+    }
+  }
+
+  useEffect(() => {
+    if (minute.length == 2);
+
+    const newTimeRange = [...timeRange];
+    newTimeRange[idx] = HHMMToSeconds(Number(hour), Number(minute));
+    setter(newTimeRange);
+  }, [hour, minute]);
 
   return (<>
     <input 
-      style={idx == 0 ? fixWidthLeftMargin : fixWidth} 
-      // value={hour === -1 ? "" : hour}
+      style={idx == 0 ? fixWidthLeftMarginHour : fixWidthHour} 
+      value={hour}
       placeholder="HH"
-      type="number"
-      min={0}
-      max={23}
       maxLength={2}
 
       onChange={(event) => {
-
+        setTimeValue(event.target.value, setHour, 0, 23);
       }}
     />
 
     {" : "}
 
     <input 
-      style={fixWidth} 
-      // value={minute === -1 ? "" : minute}
+      style={fixWidthMinute} 
+      value={minute}
       placeholder="MM"
-      type="text"
       maxLength={2}
+
+      onChange={(event) => {
+        setTimeValue(event.target.value, setMinute, 0, 59);
+      }}
+
+      onBlur={() => {
+        if (minute === "0") { 
+          setMinute("00"); 
+          return;
+        };
+
+        if (minute.length == 1) setMinute(prev => "0" + prev);
+      }}
     />     
   </>)
 }

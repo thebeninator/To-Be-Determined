@@ -21,4 +21,8 @@ function secondsToHHMM(sec) {
   return new Date(sec * 1000).toISOString().slice(11, 16);
 }
 
-export {getEventsOnDay, hashDate, secondsToHHMM}
+function HHMMToSeconds(hour, minute) {
+  return hour * 3600 + minute * 60;
+}
+
+export {getEventsOnDay, hashDate, secondsToHHMM, HHMMToSeconds}

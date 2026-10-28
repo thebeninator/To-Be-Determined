@@ -18,39 +18,54 @@ function EventPlanner({date, user, updateUser}) {
   const [eventName, setEventName] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const [eventInvites, setEventInvites] = useState([]);
-  const [eventTimeRange, setEventTimeRange] = useState(["", ""]);
+  const [eventTimeRange, setEventTimeRange] = useState([-1, -1]);
+  const [invalid, setInvalid] = useState(false);
+  const [invalidReason, setInvalidReason] = useState("");
   // const [eventDateHash, setEventDateHash] = useState("");
+
+  function createEvent() {
+    if (invalid) {
+      alert(invalidReason);
+      return;
+    }
+
+    const event = new Event(
+      eventName,
+      eventDescription,
+      eventTimeRange,
+      [],
+      hashDate(date),
+      user.id
+    );
+    
+    const success = addEvent(user, event);
+    if (success) updateUser({...user});
+  }
+
+  useEffect(() => {
+    if (eventTimeRange[0] > eventTimeRange[1]) {
+      setInvalid(true);
+      setInvalidReason("Start time cannot be later than the end time");
+
+      return;
+    }
+
+    if (eventTimeRange[0] === -1 || eventTimeRange[1] === -1) {
+      setInvalid(true);
+      setInvalidReason("Start time or end time not specified");
+
+      return;
+    }
+
+    setInvalid(false);
+    setInvalidReason("");
+
+  }, [eventTimeRange]);
 
   return (<div>
     <h2>Plan a new event</h2>
 
-    <button 
-      onClick={() => {
-        const event = new Event(
-          eventName,
-          eventDescription,
-          [0, 1500],
-          [],
-          hashDate(date),
-          user.id
-        );
-        
-        const success = addEvent(user, event);
-        if (success) updateUser({...user});       
-      }
-    }>
-      Create
-    </button>
-
-    <button style={leftMargin} onClick={() => {
-      setEventName("");
-      setEventDescription("");
-      setEventInvites([]);
-      setEventTimeRange([-1, -1]);
-      setEventDate(null);
-    }}>
-      Clear
-    </button>
+    <button onClick={createEvent}>Create</button>
 
     <h3>
       Name
@@ -69,8 +84,9 @@ function EventPlanner({date, user, updateUser}) {
 
     <h3>
       Time
+      
       <TimeRangeEntry timeRange={eventTimeRange} idx={0} setter={setEventTimeRange}/>
-      {" - "}
+      {" to "}
       <TimeRangeEntry timeRange={eventTimeRange} idx={1} setter={setEventTimeRange}/>
     </h3>    
 
