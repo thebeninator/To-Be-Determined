@@ -4,7 +4,9 @@ import Schedule from "./Schedule";
 var DummyUser = {
   name: "aaron bob",
   id: "user1",
+  // hash table
   events: {
+    // hash id
     ["2026927"]: [
       new Event("Important Meeting", "very imporat metting\nlocation: office building north-south 1", [0, 18000], [], "", "user1"),
       new Event("Important Meeting", "very imporat metting", [0, 11000], [], "", "user1")
@@ -60,10 +62,11 @@ var DummyContact2 = {
   contacts: []
 };
 
+// create clones to imitate a non-local database
 var DummyDb = {
-  ["user1"]: DummyUser,
-  ["user2"]: DummyContact1,
-  ["user3"]: DummyContact2
+  ["user1"]: {...DummyUser},
+  ["user2"]: {...DummyContact1},
+  ["user3"]: {...DummyContact2}
 }
 
 export {DummyUser, DummyDb};

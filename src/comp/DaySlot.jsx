@@ -1,3 +1,5 @@
+// renders supplementary information on a Calendar day slot
+
 import ScheduleBand from "./ScheduleBand";
 
 function DaySlot({events, schedule}) {

@@ -1,5 +1,7 @@
-import { DummyUser } from "../obj/DummyUser";
-import { secondsToHHMM } from "../Utility";
+// renders the events and their details for currently
+// selected Calendar day
+
+import { secondsToHHMM, sortEventsByTimeRange } from "../Utility";
 
 const eventStyle = {
   paddingBottom: "15px", 
@@ -7,8 +9,10 @@ const eventStyle = {
 }
 
 function renderEvents(events, user) {
+  const sortedEvents = sortEventsByTimeRange(events);
+
   return (
-    events.map((event, idx) => {
+    sortedEvents.map((event, idx) => {
       return <div key={idx} style={eventStyle}>
         <h4>
           {secondsToHHMM(event.timeRange[0])} - {secondsToHHMM(event.timeRange[1])}: {event.name === "" ? "Unnamed Event" : event.name}

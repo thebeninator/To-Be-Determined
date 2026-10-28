@@ -1,3 +1,5 @@
+// renders Calendar view + Day Inspector, Event Planner, and Scheduler
+
 import Calendar from "react-calendar";
 import DaySlot from "./DaySlot";
 import { useEffect, useLayoutEffect, useState } from "react";

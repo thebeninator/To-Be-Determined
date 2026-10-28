@@ -1,3 +1,5 @@
+// renders a view for creating, modifying, and deleting events
+
 import { useEffect, useState } from "react";
 import { addEvent } from "../obj/User";
 import Event from "../obj/Event";
@@ -42,18 +44,17 @@ function EventPlanner({date, user, updateUser}) {
     if (success) updateUser({...user});
   }
 
+  // invalidate/validate time range whenever its updated
   useEffect(() => {
     if (eventTimeRange[0] > eventTimeRange[1]) {
       setInvalid(true);
       setInvalidReason("Start time cannot be later than the end time");
-
       return;
     }
 
     if (eventTimeRange[0] === -1 || eventTimeRange[1] === -1) {
       setInvalid(true);
       setInvalidReason("Start time or end time not specified");
-
       return;
     }
 
@@ -67,6 +68,7 @@ function EventPlanner({date, user, updateUser}) {
 
     <button onClick={createEvent}>Create</button>
 
+    {/* event naming */}
     <h3>
       Name
       <input 
@@ -82,6 +84,7 @@ function EventPlanner({date, user, updateUser}) {
       />
     </h3>
 
+    {/* time setting */}
     <h3>
       Time
       
@@ -90,6 +93,7 @@ function EventPlanner({date, user, updateUser}) {
       <TimeRangeEntry timeRange={eventTimeRange} idx={1} setter={setEventTimeRange}/>
     </h3>    
 
+    {/* use currently selected calendar day */}
     <h3>
       Date 
       <input 
@@ -99,7 +103,19 @@ function EventPlanner({date, user, updateUser}) {
         placeholder="Select a date from the calendar"
       />
     </h3>
+
+    {/* contact inviting */}
+    <h3>
+      Invitees 
+      <input 
+        style={{...leftMargin, fieldSizing: "content"}} 
+        disabled={true} 
+        value={date === null ? "" : date.toDateString()} 
+        placeholder="Select a date from the calendar"
+      />
+    </h3>
     
+    {/* set description */}
     <h3>Description</h3>
     <p style={{fontSize: "13px"}}>{eventDescription.length}/1500 characters used</p>
     <textarea 

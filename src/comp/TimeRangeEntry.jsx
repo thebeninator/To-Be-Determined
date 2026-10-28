@@ -1,3 +1,5 @@
+// renders HH:MM input boxes, for setting start/end times 
+
 import { useEffect, useState } from "react";
 import { HHMMToSeconds } from "../Utility";
 
@@ -17,6 +19,7 @@ function TimeRangeEntry({timeRange, idx, setter}) {
   const [hour, setHour] = useState("");
   const [minute, setMinute] = useState("");
 
+  // for setting the hour/minute states, with bounds and type checking
   function setTimeValue(value, setter, min, max) {
     if (value === "") {
       setter("");
@@ -30,6 +33,7 @@ function TimeRangeEntry({timeRange, idx, setter}) {
     }
   }
 
+  // update start/end time range in TBDCalendar
   useEffect(() => {
     if (minute.length == 2);
 
@@ -63,11 +67,7 @@ function TimeRangeEntry({timeRange, idx, setter}) {
       }}
 
       onBlur={() => {
-        if (minute === "0") { 
-          setMinute("00"); 
-          return;
-        };
-        // ex: convert 1 to 01 
+        // make single digit minutes two digits, ex: convert 1 to 01 
         if (minute.length == 1) setMinute(prev => "0" + prev);
       }}
     />     
