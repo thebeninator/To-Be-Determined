@@ -2,14 +2,27 @@ import Event from "./Event";
 import Schedule from "./Schedule";
 
 var DummyUser = {
-  name: "aaron bob",
+  name: "Aaron Bob",
   id: "user1",
   // hash table
   events: {
     // hash id
     ["2026927"]: [
-      new Event("Important Meeting", "very imporat metting\nlocation: office building north-south 1", [0, 18000], [], "", "user1"),
-      new Event("Important Meeting", "very imporat metting", [0, 11000], [], "", "user1")
+      new Event(
+        "Important Meeting", 
+        "very imporat metting\nlocation: office building north-south 1", 
+        [10000, 18000], 
+        [], 
+        "", 
+        "user1"
+      ),
+      new Event("Important Meeting", 
+        "very imporat metting", 
+        [0, 11000], 
+        [], 
+        "", 
+        "user1"
+      )
     ]
   },
 
@@ -27,7 +40,7 @@ var DummyUser = {
 };
 
 var DummyContact1 = {
-  name: "charlie darlene",
+  name: "Charlie Darlene",
   id: "user2",
   events: {},
 
@@ -45,7 +58,7 @@ var DummyContact1 = {
 };
 
 var DummyContact2 = {
-  name: "ergot fromage",
+  name: "Ergot Fromage",
   id: "user3",
   events: {},
 

@@ -6,7 +6,9 @@ function ScheduleBand() {
     transform: "translate(0%, 50%)"
   };
 
-  return <div style={style} />
+  return <div style={style}>
+    
+  </div> 
 }
 
 export default ScheduleBand;

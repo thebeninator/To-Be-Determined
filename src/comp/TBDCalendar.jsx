@@ -31,16 +31,17 @@ function TBDCalendar() {
     setYear(date.getFullYear());
   }, []);
 
+  useEffect(() => {
+    if (selectedDate === null) return;
+    const events = getEventsOnDay(user, selectedDate);
+    setSelectedDateEvents(events);
+  }, [user]);
+
   return (<>   
     <div style={{padding: "80px"}}>
       <h1>
         {MONTHS[month]}, {year}
       </h1>
-
-      <button onClick={() => {
-      }}>
-        Go to Today
-      </button>
 
       <Calendar
         // showNavigation = {false} // TODO: custom nav
@@ -96,7 +97,7 @@ function TBDCalendar() {
         </button>
       </div>
 
-      {dayInspectorActive && <DayInspector date={selectedDate} events={selectedDateEvents} user={user} />}
+      {dayInspectorActive && <DayInspector date={selectedDate} user={user} />}
       {eventPlannerActive && <EventPlanner date={selectedDate} user={user} updateUser={updateUser} />}
     </div>
   </>);

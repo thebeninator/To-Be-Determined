@@ -35,9 +35,13 @@ function HHMMToSeconds(hour, minute) {
   return hour * 3600 + minute * 60;
 }
 
+// sorts an array of events by start time (earliest -> latest)
+// returns a copy of the array, sorted
 function sortEventsByTimeRange(events) {
     // copy first b/c sort mutates
-  const sortedEvents = [...events].sort()
+  const sortedEvents = [...events].sort((eventA, eventB) => {
+    return eventA.timeRange[0] - eventB.timeRange[0];
+  });
 
   return sortedEvents;
 }
