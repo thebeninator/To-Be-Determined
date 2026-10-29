@@ -18,7 +18,8 @@ const textAreaStyle = {
   resize: "none"
 }
 
-function freeTimeRangeStringBuilder(freeTimeRanges) {
+function freeTimeRangeStringBuilder(user, date) {
+  const freeTimeRanges = findFreeRanges(user, date);
   var string = "";
 
   for (var i = 0; i < freeTimeRanges.length; i++) {
@@ -99,7 +100,10 @@ function EventPlanner({date, user, updateUser}) {
     <>
       {/* user availability */}
       <h3>Availability</h3>
-      <p>You: {freeTimeRangeStringBuilder(findFreeRanges(user, date))}</p>
+      <p>You: {freeTimeRangeStringBuilder(user, date)}</p>
+      {eventInvites.map((userId, idx) => {
+        return <p>{DummyDb[userId].name}: {freeTimeRangeStringBuilder(DummyDb[userId], date)}</p>
+      })}
 
       {/* contact inviting */}
       <h3 style={{width: "clamp(200px, 15vw, 600px)"}}>
