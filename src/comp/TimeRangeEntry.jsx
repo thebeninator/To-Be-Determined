@@ -1,7 +1,7 @@
 // renders HH:MM input boxes, for setting start/end times 
 
 import { useEffect, useState } from "react";
-import { HHMMToSeconds } from "../Utility";
+import { HHMMToSeconds, secondsToHHMM } from "../Utility";
 
 const fixWidthHour = {
   width: "25px",
@@ -15,7 +15,7 @@ const fixWidthMinute = {
 
 const fixWidthLeftMarginHour = {marginLeft: "20px", ...fixWidthHour};
 
-function TimeRangeEntry({timeRange, idx, setter}) {
+function TimeRangeEntry({timeRange, idx, setEventTimeRange}) {
   const [hour, setHour] = useState("");
   const [minute, setMinute] = useState("");
 
@@ -33,13 +33,18 @@ function TimeRangeEntry({timeRange, idx, setter}) {
     }
   }
 
+  // useEffect(() => {
+  //   setHour(secondsToHHMM(timeRange[idx]).split(":")[0]);
+  //   setMinute(secondsToHHMM(timeRange[idx]).split(":")[1]);
+  // }, timeRange);
+
   // update start/end time range in TBDCalendar
   useEffect(() => {
     if (minute.length == 2);
 
     const newTimeRange = [...timeRange];
     newTimeRange[idx] = HHMMToSeconds(Number(hour), Number(minute));
-    setter(newTimeRange);
+    setEventTimeRange(newTimeRange);
   }, [hour, minute]);
 
   return (<>

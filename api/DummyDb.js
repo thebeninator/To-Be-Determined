@@ -1,5 +1,5 @@
-import Event from "./Event";
-import Schedule from "./Schedule";
+import Event from "../src/obj/Event";
+import Schedule from "../src/obj/Schedule";
 
 var DummyUser = {
   name: "Aaron Bob",
@@ -13,14 +13,15 @@ var DummyUser = {
         "very imporat metting\nlocation: office building north-south 1", 
         [10000, 18000], 
         [], 
-        "2026927", 
+        new Date(2026, 9, 27), 
         "user1"
       ),
-      new Event("Important Meeting", 
+      new Event(
+        "Important Meeting", 
         "very imporat metting", 
         [0, 11000], 
         [], 
-        "2026927", 
+        new Date(2026, 9, 27), 
         "user1"
       )
     ]

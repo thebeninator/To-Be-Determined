@@ -4,10 +4,10 @@ import Calendar from "react-calendar";
 import DaySlot from "./DaySlot";
 import { createContext, useEffect, useLayoutEffect, useState } from "react";
 import { getEventsOnDay, hashDate } from "../Utility";
-import {DummyUser} from "../obj/DummyUser";
+import {DummyUser} from "../../api/DummyDb";
 import DayInspector from "./DayInspector";
 import EventPlanner from "./EventPlanner";
-import TBDCalendarContext from "./TBDCalendarContext";
+import TBDCalendarContext from "../context/TBDCalendarContext";
 
 const MONTHS = [
   "January", "February", "March", 
@@ -17,6 +17,7 @@ const MONTHS = [
 ];
 
 function TBDCalendar() {
+  const [user, updateUser] = useState(DummyUser);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedDateEvents, setSelectedDateEvents] = useState({});
   const [month, setMonth] = useState(0);
@@ -24,9 +25,20 @@ function TBDCalendar() {
   const [dayInspectorActive, setDayInspectorActive] = useState(true);
   const [weeklySchedulerActive, setWeeklySchedulerActive] = useState(false);
   const [eventPlannerActive, setEventPlannerActive] = useState(false);
-  const [user, updateUser] = useState(DummyUser);
   const [plannedEventTimeRange, setPlannedEventTimeRange] = useState([-1, -1]);
   const [plannedInvitees, setPlannedInvitees] = useState([]);
+  const [editingEvent, setEditingEvent] = useState(null);
+
+  const daySlotContext = {
+    user, plannedEventTimeRange, plannedInvitees, 
+    eventPlannerActive, editingEvent
+  };
+
+  const eventPlannerContext = {
+    selectedDate, user, updateUser, 
+    setPlannedEventTimeRange, setPlannedInvitees, 
+    setSelectedDate, editingEvent, setEditingEvent
+  };
 
   useLayoutEffect(() => {
     var date = new Date();
@@ -39,6 +51,10 @@ function TBDCalendar() {
     const events = getEventsOnDay(user, selectedDate);
     setSelectedDateEvents(events);
   }, [user]);
+
+  useEffect(() => {
+    if (!eventPlannerActive) setEditingEvent(null);
+  }, [eventPlannerActive])
 
   return (<>   
     <div style={{padding: "80px"}}>
@@ -55,7 +71,7 @@ function TBDCalendar() {
             const events = getEventsOnDay(user, date);
 
             return (
-              <TBDCalendarContext.Provider value={{date, user, events, plannedEventTimeRange, plannedInvitees, eventPlannerActive}}>
+              <TBDCalendarContext.Provider value={{date, events, ...daySlotContext}}>
                 <DaySlot />
               </TBDCalendarContext.Provider>
             )
@@ -107,7 +123,7 @@ function TBDCalendar() {
 
       {dayInspectorActive && <DayInspector date={selectedDate} user={user} />}
       {eventPlannerActive && 
-        <TBDCalendarContext.Provider value={{selectedDate, user, updateUser, setPlannedEventTimeRange, setPlannedInvitees}}>
+        <TBDCalendarContext.Provider value={eventPlannerContext}>
           <EventPlanner />
         </TBDCalendarContext.Provider>
       }

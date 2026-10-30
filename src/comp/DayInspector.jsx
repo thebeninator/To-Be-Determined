@@ -1,7 +1,7 @@
 // renders the events and their details for currently
 // selected Calendar day
 
-import { DummyDb } from "../obj/DummyUser";
+import { DummyDb } from "../../api/DummyDb";
 import { getEventsOnDay, secondsToHHMM, sortEventsByTimeRange } from "../Utility";
 
 const eventStyle = {

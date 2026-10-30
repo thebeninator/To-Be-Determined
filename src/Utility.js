@@ -13,12 +13,12 @@ function getEventsOnDay(user, date) {
     const maybeDayKey = hashDate(date);
     const keyExists = maybeDayKey in user.events;
 
-    if (!keyExists) return null;
+    if (!keyExists) return [];
 
     return user.events[maybeDayKey];
   } catch (exception) {
     console.error(exception.message);
-    return null;
+    return [];
   }
 }
 

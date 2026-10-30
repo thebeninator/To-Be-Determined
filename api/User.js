@@ -1,4 +1,4 @@
-import { getEventsOnDay, sortEventsByTimeRange } from "../Utility";
+import { getEventsOnDay, sortEventsByTimeRange } from "../src/Utility";
 
 // user: User object
 // event: Event to be added
@@ -28,6 +28,23 @@ function addEvent(user, event) {
 }
 
 // user: User object
+// event: Event to be updated
+// returns true if event was successfully updated, false otherwise
+function updateEvent(user, oldEvent, newEvent) {
+  try {
+    // note: this should attempt to update the DB before
+    // making these changes locally
+    deleteEvent(user, oldEvent);
+    addEvent(user, newEvent);
+
+    return true;
+  } catch (exception) {
+    console.error("failed to update event: " + exception.message);
+    return false;
+  }
+}
+
+// user: User object
 // event: Event to be deleted
 // returns true if event was successfully deleted, false otherwise
 function deleteEvent(user, event) {
@@ -39,9 +56,11 @@ function deleteEvent(user, event) {
     if (!(hash in user.events)) return false;
 
     var idx = -1;
-    for (var i = 0; i < user.events.length; i++) {
-      if (user.events[hash][i].id === event.id) idx = i;
-      break;
+    for (var i = 0; i < user.events[hash].length; i++) {
+      if (user.events[hash][i].id === event.id) {
+        idx = i;
+        break;
+      }
     }
 
     if (idx === -1) return false;
@@ -95,7 +114,7 @@ function findFreeRanges(user, date) {
   try {
     const daySchedule = user.weeklySchedule[date.getDay()];
     const scheduleEvents = daySchedule.events;
-    const datedEvents = getEventsOnDay(user, date) || [];
+    const datedEvents = getEventsOnDay(user, date);
     const busyRanges = [...scheduleEvents, ...datedEvents];
 
     if (busyRanges.length === 0) return [[dayStart, dayEnd]];
@@ -138,4 +157,4 @@ function findFreeRanges(user, date) {
   }
 }
 
-export {addEvent, deleteEvent, findFreeRanges, findTimeConflicts, inFreeTimeRanges};
+export {addEvent, deleteEvent, updateEvent, findFreeRanges, findTimeConflicts, inFreeTimeRanges};

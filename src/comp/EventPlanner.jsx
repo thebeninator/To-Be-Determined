@@ -1,14 +1,15 @@
 // renders a view for creating, modifying, and deleting events
 
 import { useContext, useEffect, useState } from "react";
-import { addEvent, findFreeRanges, findTimeConflicts, inFreeTimeRanges } from "../obj/User";
+import { addEvent, deleteEvent, findFreeRanges, findTimeConflicts, inFreeTimeRanges, updateEvent } from "../../api/User";
 import Event from "../obj/Event";
 import { getEventsOnDay, hashDate, secondsToHHMM, validTimeRange } from "../Utility";
 import TimeRangeEntry from "./TimeRangeEntry";
 import Select from "react-select";
-import { DummyDb } from "../obj/DummyUser";
-import TBDCalendarContext from "./TBDCalendarContext";
+import { DummyDb } from "../../api/DummyDb";
+import TBDCalendarContext from "../context/TBDCalendarContext";
 import CreatedEventsList from "./CreatedEventsList";
+import EventPlannerContext from "../context/EventPlannerContext";
 
 const leftMargin = {
   marginLeft: "20px"
@@ -40,13 +41,19 @@ function freeTimeRangeStringBuilder(user, date) {
 function EventPlanner() {
   const {
     selectedDate, user, updateUser, 
-    setPlannedEventTimeRange, setPlannedInvitees
+    setPlannedEventTimeRange, setPlannedInvitees, setSelectedDate,
+    editingEvent, setEditingEvent
   } = useContext(TBDCalendarContext);
   const [eventName, setEventName] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const [eventInvites, setEventInvites] = useState([]);
   const [eventTimeRange, setEventTimeRange] = useState([-1, -1]);
-  // const [eventDateHash, setEventDateHash] = useState("");
+
+  const createdEventsListContext = {
+    setEventDescription, 
+    setEventInvites, setEventName, 
+    setEventTimeRange
+  };
 
   useEffect(() => {
     setPlannedEventTimeRange(eventTimeRange);
@@ -55,6 +62,13 @@ function EventPlanner() {
   useEffect(() => {
     setPlannedInvitees(eventInvites);
   }, [eventInvites]);
+
+  function clearEvent() {
+    setEventName("");
+    setEventTimeRange([-1, -1]);
+    setEventDescription("");
+    setEventInvites([]);
+  }
 
   function renderInviteeAvailability(invitees) {
     return invitees.map((userId, idx) => {
@@ -77,7 +91,16 @@ function EventPlanner() {
     });
   }
 
-  function createEvent() {
+  function tryDeleteEvent() {
+    const success = deleteEvent(user, editingEvent);
+    if (success) {
+      updateUser({...user});
+      setEditingEvent(null);
+      clearEvent();
+    };  
+  }
+
+  function tryCreateOrUpdateEvent() {
     var invalid = false;
     var invalidReason = "";
     const [start, end] = eventTimeRange;
@@ -98,7 +121,7 @@ function EventPlanner() {
     }
 
     if (invalid) {
-      alert("Could not create event, reason(s):\n" + invalidReason);
+      alert("Could not create/update event, reason(s):\n" + invalidReason);
       return;
     }
 
@@ -107,18 +130,35 @@ function EventPlanner() {
       eventDescription,
       eventTimeRange,
       eventInvites,
-      hashDate(selectedDate),
+      selectedDate,
       user.id
     );
     
-    const success = addEvent(user, event);
-    if (success) updateUser({...user});
+    const success = editingEvent !== null ? updateEvent(user, editingEvent, event) : addEvent(user, event);
+    if (success) {
+      updateUser({...user});
+      setEditingEvent(null);
+      clearEvent();
+    };
   }
 
   return (<div>
-    <h2>Plan a new event</h2>
+    <h2>{editingEvent !== null ? "Editing event" : "Plan a new event"}</h2>
 
-    <button onClick={createEvent}>Create</button>
+    <button onClick={tryCreateOrUpdateEvent}>{editingEvent !== null ? "Save" : "Create"}</button>
+
+    {editingEvent !== null && <button onClick={tryDeleteEvent}>Delete</button>}
+
+    {editingEvent !== null && 
+      <button 
+        onClick={() => {
+          setEditingEvent(null); 
+          clearEvent();}
+        }
+      >
+        Cancel Edit
+      </button>
+    }
 
     <div style={{display: "flex", gap: "100px"}}>
       {/* use currently selected calendar day */}
@@ -134,9 +174,9 @@ function EventPlanner() {
         {selectedDate !== null && <>
           {/* time setting */}
           <h3> Time
-            <TimeRangeEntry timeRange={eventTimeRange} idx={0} setter={setEventTimeRange}/>
+            <TimeRangeEntry timeRange={eventTimeRange} idx={0} setEventTimeRange={setEventTimeRange}/>
             {" to "}
-            <TimeRangeEntry timeRange={eventTimeRange} idx={1} setter={setEventTimeRange}/>
+            <TimeRangeEntry timeRange={eventTimeRange} idx={1} setEventTimeRange={setEventTimeRange}/>
           </h3>    
           {!validTimeRange(eventTimeRange) && <p style={{fontSize: "15px", color: "red"}}>Invalid start/end time</p>}
 
@@ -158,7 +198,13 @@ function EventPlanner() {
                 }
 
                 setEventInvites(ids);
-              }} 
+              }}
+
+              value={
+                eventInvites.map((userId, idx) => {
+                  return {value: userId, label: DummyDb[userId].name}
+                })
+              }
             />
           </h3>
 
@@ -199,10 +245,12 @@ function EventPlanner() {
         />
       </div>}
 
-      {selectedDate === null ? null : <div>
-        <h3>On this day</h3>
-        <CreatedEventsList selectedDate={selectedDate} user={user} />
-      </div>}
+      <div>
+        <h3>Created Events</h3>
+        <EventPlannerContext.Provider value={createdEventsListContext}>
+          <CreatedEventsList selectedDate={selectedDate} user={user} />
+        </EventPlannerContext.Provider>
+      </div>
     </div>
   </div>);
 }

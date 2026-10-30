@@ -1,10 +1,10 @@
 // renders supplementary information on a Calendar day slot
 
 import { useContext } from "react";
-import { DummyDb } from "../obj/DummyUser";
-import { addEvent, inFreeTimeRanges } from "../obj/User";
+import { DummyDb } from "../../api/DummyDb";
+import { addEvent, inFreeTimeRanges } from "../../api/User";
 import ScheduleBand from "./ScheduleBand";
-import TBDCalendarContext from "./TBDCalendarContext";
+import TBDCalendarContext from "../context/TBDCalendarContext";
 import { validTimeRange } from "../Utility";
 
 function getPercentAvailable(user, invited, eventTimeRange, date) {
@@ -38,7 +38,7 @@ function DaySlot() {
     </p>
     {eventPlannerActive && validTimeRange(plannedEventTimeRange) &&
       <p>Availability: {getPercentAvailable(user, plannedInvitees, plannedEventTimeRange, date)}</p>
-    }
+    || <p>Availability: N/A</p>}
   </div>
 }
 
