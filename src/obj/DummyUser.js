@@ -13,14 +13,14 @@ var DummyUser = {
         "very imporat metting\nlocation: office building north-south 1", 
         [10000, 18000], 
         [], 
-        "", 
+        "2026927", 
         "user1"
       ),
       new Event("Important Meeting", 
         "very imporat metting", 
         [0, 11000], 
         [], 
-        "", 
+        "2026927", 
         "user1"
       )
     ]

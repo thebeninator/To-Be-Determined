@@ -1,12 +1,14 @@
 // renders a view for creating, modifying, and deleting events
 
-import { useEffect, useState } from "react";
-import { addEvent, findFreeRanges } from "../obj/User";
+import { useContext, useEffect, useState } from "react";
+import { addEvent, findFreeRanges, findTimeConflicts, inFreeTimeRanges } from "../obj/User";
 import Event from "../obj/Event";
-import { getEventsOnDay, hashDate, secondsToHHMM } from "../Utility";
+import { getEventsOnDay, hashDate, secondsToHHMM, validTimeRange } from "../Utility";
 import TimeRangeEntry from "./TimeRangeEntry";
 import Select from "react-select";
 import { DummyDb } from "../obj/DummyUser";
+import TBDCalendarContext from "./TBDCalendarContext";
+import CreatedEventsList from "./CreatedEventsList";
 
 const leftMargin = {
   marginLeft: "20px"
@@ -23,9 +25,8 @@ function freeTimeRangeStringBuilder(user, date) {
   var string = "";
 
   for (var i = 0; i < freeTimeRanges.length; i++) {
-    const range = freeTimeRanges[i];
-    const start = range[0];
-    const end = range[1];
+    const [start, end] = freeTimeRanges[i];
+  
     string += "[" + secondsToHHMM(start) + " - " + secondsToHHMM(end) + "]";
 
     if (i != freeTimeRanges.length - 1) {
@@ -36,28 +37,62 @@ function freeTimeRangeStringBuilder(user, date) {
   return string;
 }
 
-function EventPlanner({date, user, updateUser}) {
+function EventPlanner() {
+  const {
+    selectedDate, user, updateUser, 
+    setPlannedEventTimeRange, setPlannedInvitees
+  } = useContext(TBDCalendarContext);
   const [eventName, setEventName] = useState("");
   const [eventDescription, setEventDescription] = useState("");
   const [eventInvites, setEventInvites] = useState([]);
   const [eventTimeRange, setEventTimeRange] = useState([-1, -1]);
   // const [eventDateHash, setEventDateHash] = useState("");
-  
+
+  useEffect(() => {
+    setPlannedEventTimeRange(eventTimeRange);
+  }, [eventTimeRange]);
+
+  useEffect(() => {
+    setPlannedInvitees(eventInvites);
+  }, [eventInvites]);
+
+  function renderInviteeAvailability(invitees) {
+    return invitees.map((userId, idx) => {
+      const invitedUser = DummyDb[userId];
+      var style = {};
+      var timeConflict = false;
+
+      if (
+        !inFreeTimeRanges(eventTimeRange, invitedUser, selectedDate) 
+        && validTimeRange(eventTimeRange)
+      ) {
+        style={color: "red"};
+        timeConflict = true;
+      }
+
+      return <p style={style} key={idx}>
+        {userId === user.id ? "You" : invitedUser.name}: {freeTimeRangeStringBuilder(invitedUser, selectedDate)}
+        {timeConflict ? " <<< Time Conflict" : ""}
+      </p>
+    });
+  }
+
   function createEvent() {
     var invalid = false;
     var invalidReason = "";
+    const [start, end] = eventTimeRange;
 
-    if (eventTimeRange[0] > eventTimeRange[1]) {
+    if (start > end) {
       invalid = true;
       invalidReason += "Start time cannot be later than the end time\n";
     }
 
-    if (eventTimeRange[0] === -1 || eventTimeRange[1] === -1) {
+    if (start === -1 || end === -1) {
       invalid = true;
       invalidReason += "Start time or end time not specified\n";
     }
 
-    if (date === null) {
+    if (selectedDate === null) {
       invalid = true;
       invalidReason += "No date selected\n";
     }
@@ -72,7 +107,7 @@ function EventPlanner({date, user, updateUser}) {
       eventDescription,
       eventTimeRange,
       eventInvites,
-      hashDate(date),
+      hashDate(selectedDate),
       user.id
     );
     
@@ -85,89 +120,90 @@ function EventPlanner({date, user, updateUser}) {
 
     <button onClick={createEvent}>Create</button>
 
-    {/* use currently selected calendar day */}
-    <h3>
-      Date 
-      <input 
-        style={{...leftMargin, fieldSizing: "content"}} 
-        disabled={true} 
-        value={date === null ? "" : date.toDateString()} 
-        placeholder="Select a date from the calendar"
-      />
-    </h3>
+    <div style={{display: "flex", gap: "100px"}}>
+      {/* use currently selected calendar day */}
+      <div>
+        <h3> Date <input 
+          style={{...leftMargin, fieldSizing: "content"}} 
+          disabled={true} 
+          value={selectedDate === null ? "" : selectedDate.toDateString()} 
+          placeholder="Select a date from the calendar"
+          />
+        </h3>
 
-    {date === null ? null : 
-    <>
-      {/* user availability */}
-      <h3>Availability</h3>
-      <p>You: {freeTimeRangeStringBuilder(user, date)}</p>
-      {eventInvites.map((userId, idx) => {
-        return <p>{DummyDb[userId].name}: {freeTimeRangeStringBuilder(DummyDb[userId], date)}</p>
-      })}
+        {selectedDate !== null && <>
+          {/* time setting */}
+          <h3> Time
+            <TimeRangeEntry timeRange={eventTimeRange} idx={0} setter={setEventTimeRange}/>
+            {" to "}
+            <TimeRangeEntry timeRange={eventTimeRange} idx={1} setter={setEventTimeRange}/>
+          </h3>    
+          {!validTimeRange(eventTimeRange) && <p style={{fontSize: "15px", color: "red"}}>Invalid start/end time</p>}
 
-      {/* contact inviting */}
-      <h3 style={{width: "clamp(200px, 15vw, 600px)"}}>
-        Invitees 
-        <Select 
-          isMulti={true} 
-          options={
-            user.contacts.map((userId, idx) => {
-              return {value: userId, label: DummyDb[userId].name};
-            })
-          }
-          onChange={(options) => {
-            // options is [{value: ..., label: ...}, ...]
-            const ids = [];
-            for (var i = 0; i < options.length; i++) {
-              ids.push(options[i].value);
-            }
+          {/* contact inviting */}
+          <h3 style={{width: "clamp(200px, 30vw, 600px)"}}>
+            Invitees <Select 
+              isMulti={true} 
+              options={
+                user.contacts.map((userId, idx) => {
+                  return {value: userId, label: DummyDb[userId].name};
+                })
+              }
 
-            setEventInvites(ids);
-          }} 
-        />
-      </h3>
+              onChange={(options) => {
+                // options is [{value: ..., label: ...}, ...]
+                const ids = [];
+                for (var i = 0; i < options.length; i++) {
+                  ids.push(options[i].value);
+                }
 
-      {/* time setting */}
-      <h3>
-        Time
-        
-        <TimeRangeEntry timeRange={eventTimeRange} idx={0} setter={setEventTimeRange}/>
-        {" to "}
-        <TimeRangeEntry timeRange={eventTimeRange} idx={1} setter={setEventTimeRange}/>
-      </h3>    
+                setEventInvites(ids);
+              }} 
+            />
+          </h3>
+
+          {/* user availability */}
+          <h3>Availability</h3>
+          {renderInviteeAvailability([user.id, ...eventInvites])}
+        </>}
+      </div>
       
-      {/* event naming */}
-      <h3>
-        Name
-        <input 
-          style={leftMargin} 
-          id="eventDate" 
+      {selectedDate !== null && <div>
+        {/* event naming */}
+        <h3>
+          Name
+          <input 
+            style={leftMargin} 
+            type="text" 
+            value={eventName} 
+            placeholder="Name of the event" 
+            maxLength={100}
+            onChange={(event) => {
+              setEventName(event.target.value);
+            }}
+          />
+        </h3>
+
+        {/* set description */}
+        <h3>Description</h3>
+        <p style={{fontSize: "15px"}}>{eventDescription.length}/1500 characters used</p>
+        <textarea 
+          style={textAreaStyle} 
           type="text" 
-          value={eventName} 
-          placeholder="Name of the event" 
-          maxLength={100}
+          value={eventDescription} 
+          placeholder="Description of the event"
+          maxLength={1500}
           onChange={(event) => {
-            setEventName(event.target.value);
+            setEventDescription(event.target.value);
           }}
         />
-      </h3>
+      </div>}
 
-      {/* set description */}
-      <h3>Description</h3>
-      <p style={{fontSize: "15px"}}>{eventDescription.length}/1500 characters used</p>
-      <textarea 
-        style={textAreaStyle} 
-        id="eventDate" 
-        type="text" 
-        value={eventDescription} 
-        placeholder="Description of the event"
-        maxLength={1500}
-        onChange={(event) => {
-          setEventDescription(event.target.value);
-        }}
-      />
-    </>}
-
+      {selectedDate === null ? null : <div>
+        <h3>On this day</h3>
+        <CreatedEventsList selectedDate={selectedDate} user={user} />
+      </div>}
+    </div>
   </div>);
 }
 

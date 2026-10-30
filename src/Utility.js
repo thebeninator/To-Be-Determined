@@ -10,12 +10,12 @@ function hashDate(date) {
 // date: Date object
 function getEventsOnDay(user, date) {
   try {
-    const maybe_day_key = hashDate(date);
-    const key_exists = maybe_day_key in user.events;
+    const maybeDayKey = hashDate(date);
+    const keyExists = maybeDayKey in user.events;
 
-    if (!key_exists) return null;
+    if (!keyExists) return null;
 
-    return user.events[maybe_day_key];
+    return user.events[maybeDayKey];
   } catch (exception) {
     console.error(exception.message);
     return null;
@@ -46,4 +46,10 @@ function sortEventsByTimeRange(events) {
   return sortedEvents;
 }
 
-export {getEventsOnDay, hashDate, secondsToHHMM, HHMMToSeconds, sortEventsByTimeRange}
+function validTimeRange(timeRange) {
+  const [start, end] = timeRange;
+
+  return (start < end) && (start !== -1 && end !== -1);
+}
+
+export {getEventsOnDay, hashDate, secondsToHHMM, HHMMToSeconds, sortEventsByTimeRange, validTimeRange}

@@ -7,15 +7,18 @@ function addEvent(user, event) {
   try {
     // note: this should attempt to update the DB before
     // making these changes locally
+    const [eventStart, eventEnd] = event.timeRange;
+    const hash = event.dateHash;
 
     if (event.date === null || event.date === "") return false;
-    if (event.timeRange[0] === -1 || event.timeRange[1] === -1) return false;
+    if (eventStart === -1 || eventEnd === -1) return false;
+    if (eventStart > eventEnd) return false;
 
-    if (user.events[event.dateHash] === null || user.events[event.dateHash] === undefined) {
-      user.events[event.dateHash] = [];
+    if (user.events[hash] === null || user.events[hash] === undefined) {
+      user.events[hash] = [];
     }
 
-    user.events[event.dateHash].push(event);
+    user.events[hash].push(event);
 
     return true;
   } catch (exception) {
@@ -31,7 +34,6 @@ function deleteEvent(user, event) {
   try {
     // note: this should attempt to update the DB before
     // making these changes locally
-
     const hash = event.dateHash;
 
     if (!(hash in user.events)) return false;
@@ -53,57 +55,87 @@ function deleteEvent(user, event) {
   }
 }
 
-function updateEvent(user, event, newData) {
-  // note: this should attempt to update the DB before
-  // making these changes locally
+// eventTimeRange: time range
+// antagEvents: an array of event object
+// returns an array containing the events from antagEvents 
+// that conflict with eventTimeRange
+function findTimeConflicts(eventTimeRange, antagEvents) {
+  try {
+    const [eventStart, eventEnd] = eventTimeRange;
+    
+    return antagEvents.filter((antagEvent) => {
+      const [antagStart, antagEnd] = antagEvent.timeRange;
+      return eventStart < antagEnd && antagStart < eventEnd;
+    });
+  } catch (exception) {
+    console.error(exception.message);
+    return [];
+  }
+}
+
+function inFreeTimeRanges(eventTimeRange, user, date) {
+  const freeTimeRanges = findFreeRanges(user, date);
+  
+  const [eventStart, eventEnd] = eventTimeRange;
+
+  const overlap = freeTimeRanges.filter((freeTimeRange) => {
+    const [freeStart, freeEnd] = freeTimeRange;
+    return (
+      eventStart <= freeEnd && freeStart <= eventEnd &&
+      eventStart >= freeStart && freeEnd >= eventEnd
+    );
+  });
+
+  return overlap.length > 0;
 }
 
 function findFreeRanges(user, date) {
   const dayStart = 0, dayEnd = 86340; // 00:00, 23:59
 
-  const daySchedule = Array.isArray(user.weeklySchedule)
-    ? user.weeklySchedule[date.getDay()]
-    : null;
-  const scheduleEvents = daySchedule && Array.isArray(daySchedule.events)
-    ? daySchedule.events
-    : [];
-  const datedEvents = getEventsOnDay(user, date) || [];
-  const busyRanges = [...scheduleEvents, ...datedEvents];
+  try {
+    const daySchedule = user.weeklySchedule[date.getDay()];
+    const scheduleEvents = daySchedule.events;
+    const datedEvents = getEventsOnDay(user, date) || [];
+    const busyRanges = [...scheduleEvents, ...datedEvents];
 
-  if (busyRanges.length === 0) return [[dayStart, dayEnd]];
-  
-  const sorted = sortEventsByTimeRange(busyRanges);
-  const merged = [];
+    if (busyRanges.length === 0) return [[dayStart, dayEnd]];
+    
+    const sorted = sortEventsByTimeRange(busyRanges);
+    const merged = [];
 
-  for (const event of sorted) {
-    const [start, end] = event.timeRange;
-    if (start >= end) continue;
+    for (const event of sorted) {
+      const [start, end] = event.timeRange;
+      if (start >= end) continue;
 
-    const last = merged[merged.length - 1];
+      const last = merged[merged.length - 1];
 
-    if (!last || start > last[1]) {
-      merged.push([start, end]);
-    } else {
-      last[1] = Math.max(last[1], end);
-    }
-  }
-
-  const freeRanges = [];
-  let currentTime = dayStart;
-
-  for (const [start, end] of merged) {
-    if (start > currentTime) {
-      freeRanges.push([currentTime, start]);
+      if (!last || start > last[1]) {
+        merged.push([start, end]);
+      } else {
+        last[1] = Math.max(last[1], end);
+      }
     }
 
-    currentTime = Math.max(currentTime, end);
-  }
+    const freeRanges = [];
+    let currentTime = dayStart;
 
-  if (currentTime < dayEnd) {
-    freeRanges.push([currentTime, dayEnd]);
-  }
+    for (const [start, end] of merged) {
+      if (start > currentTime) {
+        freeRanges.push([currentTime, start]);
+      }
 
-  return freeRanges;
+      currentTime = Math.max(currentTime, end);
+    }
+
+    if (currentTime < dayEnd) {
+      freeRanges.push([currentTime, dayEnd]);
+    }
+
+    return freeRanges;
+  } catch (exception) {
+    console.error(exception.message);
+    return [];
+  }
 }
 
-export {addEvent, deleteEvent, updateEvent, findFreeRanges};
+export {addEvent, deleteEvent, findFreeRanges, findTimeConflicts, inFreeTimeRanges};
