@@ -92,6 +92,10 @@ function findTimeConflicts(eventTimeRange, antagEvents) {
   }
 }
 
+// eventTimeRange: time range
+// user: user object
+// date: date object
+// returns true if eventTimeRange is within the free time of the user
 function inFreeTimeRanges(eventTimeRange, user, date) {
   const freeTimeRanges = findFreeRanges(user, date);
   

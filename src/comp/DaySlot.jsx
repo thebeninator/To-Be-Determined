@@ -32,7 +32,7 @@ function DaySlot() {
   const hasEvents = events === null || events.length === 0;
 
   return <div>
-    <ScheduleBand />
+    <ScheduleBand color={user.weeklySchedule[date.getDay()].colour}/>
     <p style={hasEvents ? null: {backgroundColor: "yellow"}}> 
       {hasEvents ? "[No events]" : `Events: ${events.length}`}
     </p>

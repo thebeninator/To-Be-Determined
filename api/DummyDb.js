@@ -1,6 +1,8 @@
 import Event from "../src/obj/Event";
 import Schedule from "../src/obj/Schedule";
 
+const dayColorLookup = ["red", "blue", "green", "purple", "orange", "cyan", "black"];
+
 var DummyUser = {
   name: "Aaron Bob",
   id: "user1",
@@ -15,26 +17,28 @@ var DummyUser = {
         [], 
         new Date(2026, 9, 27), 
         "user1"
-      ),
+      )
+    ],
+    ["2026931"]: [    
       new Event(
-        "Important Meeting", 
-        "very imporat metting", 
+        "Water Tasting", 
+        "mmmmmmmmmmmm water", 
         [0, 11000], 
         [], 
-        new Date(2026, 9, 27), 
+        new Date(2026, 9, 31), 
         "user1"
       )
     ]
   },
 
   weeklySchedule: [
-    new Schedule(), // sunday
-    new Schedule(), // monday
-    new Schedule(), // tuesday
-    new Schedule(), // wednesday
-    new Schedule(), // thursday
-    new Schedule(), // friday
-    new Schedule(), // saturday
+    new Schedule([], dayColorLookup[0]), // sunday
+    new Schedule([], dayColorLookup[1]), // monday
+    new Schedule([], dayColorLookup[2]), // tuesday
+    new Schedule([], dayColorLookup[3]), // wednesday
+    new Schedule([], dayColorLookup[4]), // thursday
+    new Schedule([], dayColorLookup[5]), // friday
+    new Schedule([], dayColorLookup[6]), // saturday
   ],
 
   contacts: ["user2", "user3"]

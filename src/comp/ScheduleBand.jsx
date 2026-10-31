@@ -1,4 +1,4 @@
-function ScheduleBand() {
+function ScheduleBand({color}) {
   const style = {
     backgroundColor: "red",
     width: "auto",
@@ -6,7 +6,7 @@ function ScheduleBand() {
     transform: "translate(0%, 50%)"
   };
 
-  return <div style={style}>
+  return <div style={{...style, backgroundColor: color ?? "red"}}>
     
   </div> 
 }

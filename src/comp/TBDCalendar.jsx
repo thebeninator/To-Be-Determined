@@ -8,6 +8,7 @@ import {DummyUser} from "../../api/DummyDb";
 import DayInspector from "./DayInspector";
 import EventPlanner from "./EventPlanner";
 import TBDCalendarContext from "../context/TBDCalendarContext";
+import TBDScheduler from "./TBDScheduler";
 
 const MONTHS = [
   "January", "February", "March", 
@@ -39,6 +40,10 @@ function TBDCalendar() {
     setPlannedEventTimeRange, setPlannedInvitees, 
     setSelectedDate, editingEvent, setEditingEvent
   };
+
+  const weeklySchedulerContext = {
+    user, updateUser
+  }
 
   useLayoutEffect(() => {
     var date = new Date();
@@ -125,6 +130,12 @@ function TBDCalendar() {
       {eventPlannerActive && 
         <TBDCalendarContext.Provider value={eventPlannerContext}>
           <EventPlanner />
+        </TBDCalendarContext.Provider>
+      }
+
+      {weeklySchedulerActive &&
+        <TBDCalendarContext.Provider value={weeklySchedulerContext}>
+          <TBDScheduler />
         </TBDCalendarContext.Provider>
       }
     </div>

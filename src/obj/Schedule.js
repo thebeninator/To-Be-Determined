@@ -1,6 +1,7 @@
 class Schedule {
-  constructor() {
-    this.events = [];
+  constructor(events, colour) {
+    this.events = events ?? [];
+    this.colour = colour ?? "red";
   }
 }
 
