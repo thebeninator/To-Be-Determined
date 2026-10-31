@@ -5,8 +5,8 @@ import DaySlot from "./DaySlot";
 import { createContext, useEffect, useLayoutEffect, useState } from "react";
 import { getEventsOnDay, hashDate } from "../Utility";
 import {DummyUser} from "../../api/DummyDb";
-import DayInspector from "./DayInspector";
-import EventPlanner from "./EventPlanner";
+import TBDDayInspector from "./TBDDayInspector";
+import TBDEventPlanner from "./TBDEventPlanner";
 import TBDCalendarContext from "../context/TBDCalendarContext";
 import TBDScheduler from "./TBDScheduler";
 
@@ -126,10 +126,10 @@ function TBDCalendar() {
         </button>
       </div>
 
-      {dayInspectorActive && <DayInspector date={selectedDate} user={user} />}
+      {dayInspectorActive && <TBDDayInspector date={selectedDate} user={user} />}
       {eventPlannerActive && 
         <TBDCalendarContext.Provider value={eventPlannerContext}>
-          <EventPlanner />
+          <TBDEventPlanner />
         </TBDCalendarContext.Provider>
       }
 

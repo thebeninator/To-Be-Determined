@@ -52,7 +52,7 @@ function renderEvents(events, user) {
   )
 }
 
-function DayInspector({date, user}) {
+function TBDDayInspector({date, user}) {
   const events = getEventsOnDay(user, date);
 
   return (<div>
@@ -70,4 +70,4 @@ function DayInspector({date, user}) {
   </div>);
 }
 
-export default DayInspector;
+export default TBDDayInspector;
