@@ -36,8 +36,8 @@ function DaySlot() {
     <p style={hasEvents ? null: {backgroundColor: "yellow"}}> 
       {hasEvents ? "[No events]" : `Events: ${events.length}`}
     </p>
-    {eventPlannerActive && validTimeRange(plannedEventTimeRange) &&
-      <p>Availability: {getPercentAvailable(user, plannedInvitees, plannedEventTimeRange, date)}</p>
+    {eventPlannerActive && validTimeRange(plannedEventTimeRange) 
+    && <p>Availability: {getPercentAvailable(user, plannedInvitees, plannedEventTimeRange, date)}</p>
     || <p>Availability: N/A</p>}
   </div>
 }

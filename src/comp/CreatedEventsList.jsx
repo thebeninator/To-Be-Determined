@@ -6,7 +6,7 @@ import TBDCalendarContext from "../context/TBDCalendarContext";
 function CreatedEventsList() {
   const {
     setEventDescription, setEventInvites,
-    setEventName, setEventTimeRange
+    setEventName, setEventTimeRange, 
   } = useContext(EventPlannerContext);
 
   const { user, setSelectedDate, setEditingEvent } = useContext(TBDCalendarContext);
@@ -35,12 +35,12 @@ function CreatedEventsList() {
         toRender.push(<div key={i+hashDate} >
           <button title={hoverDescription}
             onClick={() => {
+              setSelectedDate(event.date);
               setEditingEvent(event)
               setEventName(event.name);
               setEventDescription(event.description);
               setEventTimeRange(event.timeRange);
               setEventInvites(event.invitees);
-              setSelectedDate(event.date);
             }}
           >{event.name} {`(${event.date.toDateString()})`}</button>
         </div>);

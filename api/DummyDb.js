@@ -51,12 +51,12 @@ var DummyContact1 = {
 
   weeklySchedule: [
     new Schedule(), // sunday
-    new Schedule(), // monday
-    new Schedule(), // tuesday
-    new Schedule(), // wednesday
-    new Schedule(), // thursday
-    new Schedule(), // friday
-    new Schedule(), // saturday
+    new Schedule([new Event("", "", [54000, 61200], [], null, "")]), // monday
+    new Schedule([new Event("", "", [54000, 61200], [], null, "")]), // tuesday
+    new Schedule([new Event("", "", [54000, 61200], [], null, "")]), // wednesday
+    new Schedule([new Event("", "", [54000, 61200], [], null, "")]), // thursday
+    new Schedule([new Event("", "", [54000, 61200], [], null, "")]), // friday
+    new Schedule([new Event("", "", [54000, 61200], [], null, "")]), // saturday
   ],
 
   contacts: []

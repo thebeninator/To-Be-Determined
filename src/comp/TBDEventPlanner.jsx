@@ -41,7 +41,7 @@ function freeTimeRangeStringBuilder(user, date) {
 function EventPlanner() {
   const {
     selectedDate, user, updateUser, 
-    setPlannedEventTimeRange, setPlannedInvitees, setSelectedDate,
+    setPlannedEventTimeRange, setPlannedInvitees,
     editingEvent, setEditingEvent
   } = useContext(TBDCalendarContext);
   const [eventName, setEventName] = useState("");
@@ -52,7 +52,8 @@ function EventPlanner() {
   const createdEventsListContext = {
     setEventDescription, 
     setEventInvites, setEventName, 
-    setEventTimeRange
+    setEventTimeRange,
+    clearEvent
   };
 
   useEffect(() => {
@@ -247,6 +248,7 @@ function EventPlanner() {
 
       <div>
         <h3>Created Events</h3>
+        <small>Hover over an event to see its description</small>
         <EventPlannerContext.Provider value={createdEventsListContext}>
           <CreatedEventsList selectedDate={selectedDate} user={user} />
         </EventPlannerContext.Provider>

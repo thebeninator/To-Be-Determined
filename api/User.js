@@ -1,5 +1,37 @@
 import { getEventsOnDay, sortEventsByTimeRange } from "../src/Utility";
 
+function addToSchedule(user, day, event) {
+  try {
+    user.weeklySchedule[day].events.push(event);
+
+    return true;
+  } catch (exception) {
+    console.error("failed to add event to schedule: " + exception.message);
+    return false;   
+  }
+}
+
+function removeFromSchedule(user, day, event) {
+  try {
+    var idx = -1;
+    for (var i = 0; i < user.weeklySchedule[day].events.length; i++) {
+      if (user.weeklySchedule[day].events[i].id === event.id) {
+        idx = i;
+        break;
+      }
+    }
+
+    if (idx === -1) return false;
+
+    user.weeklySchedule[day].events.splice(idx, 1);
+
+    return true;
+  } catch (exception) {
+    console.error("failed to add event to schedule: " + exception.message);
+    return false;   
+  }
+}
+
 // user: User object
 // event: Event to be added
 // returns true if event was successfully added, false otherwise
@@ -161,4 +193,9 @@ function findFreeRanges(user, date) {
   }
 }
 
-export {addEvent, deleteEvent, updateEvent, findFreeRanges, findTimeConflicts, inFreeTimeRanges};
+export {
+  addEvent, deleteEvent, updateEvent, 
+  findFreeRanges, findTimeConflicts, 
+  inFreeTimeRanges, addToSchedule, 
+  removeFromSchedule
+};

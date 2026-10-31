@@ -38,6 +38,18 @@ function TimeRangeEntry({timeRange, idx, setEventTimeRange}) {
   //   setMinute(secondsToHHMM(timeRange[idx]).split(":")[1]);
   // }, timeRange);
 
+  // useEffect(() => {
+  //   if (timeRange[idx] === -1) return;
+  //   if (hour === "") setHour(secondsToHHMM(timeRange[idx]).split(":")[0]);
+  //   if (minute === "") setMinute("");
+  // }, [timeRange]);
+
+  // useEffect(() => {
+  //   if (timeRange[idx] !== -1) return;
+  //   setHour("");
+  //   setMinute("");
+  // }, [timeRange]);
+
   // update start/end time range in TBDCalendar
   useEffect(() => {
     if (minute.length == 2);

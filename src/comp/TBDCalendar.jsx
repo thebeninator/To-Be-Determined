@@ -19,7 +19,7 @@ const MONTHS = [
 
 function TBDCalendar() {
   const [user, updateUser] = useState(DummyUser);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedDateEvents, setSelectedDateEvents] = useState({});
   const [month, setMonth] = useState(0);
   const [year, setYear] = useState(0);
@@ -86,13 +86,13 @@ function TBDCalendar() {
         }}
 
         onClickDay = {(date) => {
-          const oldDateHash = hashDate(selectedDate);
-          var sameDate = oldDateHash === hashDate(date);
+          // const oldDateHash = hashDate(selectedDate);
+          // var sameDate = oldDateHash === hashDate(date);
 
-          if (eventPlannerActive) sameDate = false;
+          // if (eventPlannerActive) sameDate = false;
         
-          setSelectedDate(sameDate ? null : date);
-          setSelectedDateEvents(sameDate ? null : getEventsOnDay(user, date));
+          setSelectedDate(date);
+          setSelectedDateEvents(getEventsOnDay(user, date));
         }}
       />
     </div>
