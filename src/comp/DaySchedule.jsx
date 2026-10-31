@@ -14,6 +14,7 @@ function DaySchedule({schedule, day}) {
   return (<div>
     <ScheduleBand color={schedule.colour}/>
     <h3>{dayLookup[day]}</h3>
+    <button>+</button>
     {renderEvents()}
   </div>)
 }
