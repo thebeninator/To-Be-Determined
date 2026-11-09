@@ -11,4 +11,6 @@ Run the following in your local project
 
 `npm run dev`
 
+The project will run on localhost:5173
+
 Note that Node.js (v22.16.0) and npm (or any other package manager) need to be installed
