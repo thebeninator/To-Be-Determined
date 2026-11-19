@@ -1,5 +1,16 @@
 import { getEventsOnDay, sortEventsByTimeRange } from "../src/Utility";
 
+function setScheduleEvents(user, day, events) {
+  try {
+    user.weeklySchedule[day].events = events;
+
+    return true;
+  } catch (exception) {
+    console.error("failed to set schedule: " + exception.message);
+    return false;   
+  }
+}
+
 function addToSchedule(user, day, event) {
   try {
     user.weeklySchedule[day].events.push(event);
@@ -144,14 +155,28 @@ function inFreeTimeRanges(eventTimeRange, user, date) {
   return overlap.length > 0;
 }
 
-function findFreeRanges(user, date) {
+// ...args:
+// [0] events: an array of events
+// OR
+// [0] user: user object
+// [1] date: date object
+// returns an array of time ranges corresponding to the user's free time
+function findFreeRanges(...args) {
   const dayStart = 0, dayEnd = 86340; // 00:00, 23:59
 
   try {
-    const daySchedule = user.weeklySchedule[date.getDay()];
-    const scheduleEvents = daySchedule.events;
-    const datedEvents = getEventsOnDay(user, date);
-    const busyRanges = [...scheduleEvents, ...datedEvents];
+    var busyRanges = [];
+
+    if (args.length == 2) {
+      const user = args[0];
+      const date = args[1];
+      const daySchedule = user.weeklySchedule[date.getDay()];
+      const scheduleEvents = daySchedule.events;
+      const datedEvents = getEventsOnDay(user, date);
+      busyRanges = [...scheduleEvents, ...datedEvents];
+    } else if (args.length == 1) {
+      busyRanges = args[0];
+    }
 
     if (busyRanges.length === 0) return [[dayStart, dayEnd]];
     
@@ -197,5 +222,5 @@ export {
   addEvent, deleteEvent, updateEvent, 
   findFreeRanges, findTimeConflicts, 
   inFreeTimeRanges, addToSchedule, 
-  removeFromSchedule
+  removeFromSchedule, setScheduleEvents
 };

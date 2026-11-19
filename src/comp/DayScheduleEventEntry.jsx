@@ -16,8 +16,8 @@ function DayScheduleEventEntry({user, day, event}) {
   }
 
   return(<div title={event.description} style={{paddingBottom: "15px", paddingTop: "15px"}}>
+    <button title="Delete event" style={{marginRight: "25px"}} onClick={tryDeleteEvent}>-</button>
     {<strong>{startTime} - {endTime}:</strong>} {event.name} 
-    <button title="Delete event" style={{marginLeft: "25px"}} onClick={tryDeleteEvent}>-</button>
   </div>)
 }
 

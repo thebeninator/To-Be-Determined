@@ -9,26 +9,30 @@ var DummyUser = {
   // hash table
   events: {
     // hash id
-    ["2026927"]: [
+    ["20261027"]: [
       new Event(
         "Important Meeting", 
         "very imporat metting\nlocation: office building north-south 1", 
         [10000, 18000], 
         [], 
-        new Date(2026, 9, 27), 
+        new Date(2026, 10, 27), 
         "user1"
       )
     ],
-    ["2026931"]: [    
+    ["20261030"]: [    
       new Event(
         "Water Tasting", 
         "mmmmmmmmmmmm water", 
         [0, 11000], 
         [], 
-        new Date(2026, 9, 31), 
+        new Date(2026, 10, 30), 
         "user1"
       )
     ]
+  },
+
+  pendingEvents: {
+    
   },
 
   weeklySchedule: [
@@ -69,7 +73,7 @@ var DummyContact2 = {
 
   weeklySchedule: [
     new Schedule(), // sunday
-    new Schedule(), // monday
+    new Schedule([new Event("", "", [0, 86340], [], null, "")]), // monday
     new Schedule(), // tuesday
     new Schedule(), // wednesday
     new Schedule(), // thursday

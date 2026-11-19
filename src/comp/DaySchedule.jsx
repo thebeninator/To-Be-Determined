@@ -3,13 +3,21 @@ import ScheduleBand from "./ScheduleBand";
 import DayScheduleEventEntry from "./DayScheduleEventEntry";
 import DayScheduleEventCreator from "./DayScheduleEventCreator";
 import TBDCalendarContext from "../context/TBDCalendarContext";
-import { sortEventsByTimeRange } from "../Utility";
-
-const dayLookup = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+import { dayLookup, sortEventsByTimeRange } from "../Utility";
+import DayScheduleCopyOption from "./DayScheduleCopyOption";
 
 function DaySchedule({schedule, day}) {
   const [eventCreatorActive, setEventCreatorActive] = useState(false);
+  const [copierActive, setCopierActive] = useState(false);
   const {user} = useContext(TBDCalendarContext);
+  
+  function renderCopierDays() {
+    return dayLookup.map((value, idx) => {
+      if (idx != day) {
+        return <DayScheduleCopyOption key={idx} targetDay={day} day={idx} setCopierActive={setCopierActive}/>
+      }
+    });
+  }
   
   const renderEvents = useCallback(() => {
     const events = sortEventsByTimeRange(schedule.events);
@@ -33,6 +41,14 @@ function DaySchedule({schedule, day}) {
     >
       {eventCreatorActive ? "Cancel" : "Add event"}
     </button>
+
+    <button 
+      onClick={() => {setCopierActive(!copierActive)}}
+      onBlur={() => {setCopierActive(false)}}
+    >
+      Copy From
+    </button>
+    {copierActive && <>{" >> "}{renderCopierDays()}</>}
 
     {eventCreatorActive && <DayScheduleEventCreator day={day}/>}
 

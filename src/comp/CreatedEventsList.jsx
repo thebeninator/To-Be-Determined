@@ -17,7 +17,7 @@ function CreatedEventsList() {
     if (
       maybeEventsHashTable === null 
       || maybeEventsHashTable === undefined 
-      || maybeEventsHashTable.length === 0
+      || Object.keys(maybeEventsHashTable).length === 0
     ) {
       return <p>None</p>;
     }

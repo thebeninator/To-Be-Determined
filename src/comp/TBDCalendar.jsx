@@ -3,12 +3,13 @@
 import Calendar from "react-calendar";
 import DaySlot from "./DaySlot";
 import { createContext, useEffect, useLayoutEffect, useState } from "react";
-import { getEventsOnDay, hashDate } from "../Utility";
+import { getEventsOnDay, getUser, hashDate } from "../Utility";
 import {DummyUser} from "../../api/DummyDb";
 import TBDDayInspector from "./TBDDayInspector";
 import TBDEventPlanner from "./TBDEventPlanner";
 import TBDCalendarContext from "../context/TBDCalendarContext";
 import TBDScheduler from "./TBDScheduler";
+import { update } from "three/examples/jsm/libs/tween.module.js";
 
 const MONTHS = [
   "January", "February", "March", 
@@ -18,7 +19,7 @@ const MONTHS = [
 ];
 
 function TBDCalendar() {
-  const [user, updateUser] = useState(DummyUser);
+  const [user, updateUser] = useState();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedDateEvents, setSelectedDateEvents] = useState({});
   const [month, setMonth] = useState(0);
@@ -49,10 +50,17 @@ function TBDCalendar() {
     var date = new Date();
     setMonth(date.getMonth());
     setYear(date.getFullYear());
+
+    async function acquirePrimaryUser() {
+      const primaryUser = await getUser("user1");
+      updateUser(primaryUser);
+    }
+    acquirePrimaryUser();
   }, []);
 
   useEffect(() => {
     if (selectedDate === null) return;
+    if (!user) return;
     const events = getEventsOnDay(user, selectedDate);
     setSelectedDateEvents(events);
   }, [user]);
@@ -61,85 +69,89 @@ function TBDCalendar() {
     if (!eventPlannerActive) setEditingEvent(null);
   }, [eventPlannerActive])
 
-  return (<>   
-    <div style={{padding: "80px"}}>
-      <h1>
-        {MONTHS[month]}, {year}
-      </h1>
+  if (user) {
+    return (<>   
+      <div style={{padding: "80px"}}>
+        <h1>
+          {MONTHS[month]}, {year}
+        </h1>
 
-      <Calendar
-        // showNavigation = {false} // TODO: custom nav
-        maxDetail="month"
-        showNeighboringMonth = {false}
-        tileContent = {({view, date}) => {
-          if (view === 'month') {
-            const events = getEventsOnDay(user, date);
+        <Calendar
+          // showNavigation = {false} // TODO: custom nav
+          maxDetail="month"
+          showNeighboringMonth = {false}
+          tileContent = {({view, date}) => {
+            if (view === 'month') {
+              const events = getEventsOnDay(user, date);
 
-            return (
-              <TBDCalendarContext.Provider value={{date, events, ...daySlotContext}}>
-                <DaySlot />
-              </TBDCalendarContext.Provider>
-            )
-          }
+              return (
+                <TBDCalendarContext.Provider value={{date, events, ...daySlotContext}}>
+                  <DaySlot />
+                </TBDCalendarContext.Provider>
+              )
+            }
 
-          return null;
-        }}
+            return null;
+          }}
 
-        onClickDay = {(date) => {
-          // const oldDateHash = hashDate(selectedDate);
-          // var sameDate = oldDateHash === hashDate(date);
+          onClickDay = {(date) => {
+            // const oldDateHash = hashDate(selectedDate);
+            // var sameDate = oldDateHash === hashDate(date);
 
-          // if (eventPlannerActive) sameDate = false;
-        
-          setSelectedDate(date);
-          setSelectedDateEvents(getEventsOnDay(user, date));
-        }}
-      />
-    </div>
-
-    <div>
-      <div>
-        {/* this button setup is not very flexible but i think its OK */}
-        {/* because we will not be implementing other views */}
-        <button onClick={() => {
-          setDayInspectorActive(true);
-          setWeeklySchedulerActive(false);
-          setEventPlannerActive(false);
-        }}>
-          Day Inspector
-        </button>
-
-        <button onClick={() => {
-          setDayInspectorActive(false);
-          setWeeklySchedulerActive(true);
-          setEventPlannerActive(false);
-        }}>
-          Weekly Scheduler
-        </button>
-
-        <button onClick={() => {
-          setDayInspectorActive(false);
-          setWeeklySchedulerActive(false);
-          setEventPlannerActive(true);
-        }}>
-          Event Planner
-        </button>
+            // if (eventPlannerActive) sameDate = false;
+          
+            setSelectedDate(date);
+            setSelectedDateEvents(getEventsOnDay(user, date));
+          }}
+        />
       </div>
 
-      {dayInspectorActive && <TBDDayInspector date={selectedDate} user={user} />}
-      {eventPlannerActive && 
-        <TBDCalendarContext.Provider value={eventPlannerContext}>
-          <TBDEventPlanner />
-        </TBDCalendarContext.Provider>
-      }
+      <div>
+        <div>
+          {/* this button setup is not very flexible but i think its OK */}
+          {/* because we will not be implementing other views */}
+          <button onClick={() => {
+            setDayInspectorActive(true);
+            setWeeklySchedulerActive(false);
+            setEventPlannerActive(false);
+          }}>
+            Day Inspector
+          </button>
 
-      {weeklySchedulerActive &&
-        <TBDCalendarContext.Provider value={weeklySchedulerContext}>
-          <TBDScheduler />
-        </TBDCalendarContext.Provider>
-      }
-    </div>
-  </>);
+          <button onClick={() => {
+            setDayInspectorActive(false);
+            setWeeklySchedulerActive(true);
+            setEventPlannerActive(false);
+          }}>
+            Weekly Scheduler
+          </button>
+
+          <button onClick={() => {
+            setDayInspectorActive(false);
+            setWeeklySchedulerActive(false);
+            setEventPlannerActive(true);
+          }}>
+            Event Planner
+          </button>
+        </div>
+
+        {dayInspectorActive && <TBDDayInspector date={selectedDate} user={user} />}
+        {eventPlannerActive && 
+          <TBDCalendarContext.Provider value={eventPlannerContext}>
+            <TBDEventPlanner />
+          </TBDCalendarContext.Provider>
+        }
+
+        {weeklySchedulerActive &&
+          <TBDCalendarContext.Provider value={weeklySchedulerContext}>
+            <TBDScheduler />
+          </TBDCalendarContext.Provider>
+        }
+      </div>
+    </>);
+  }
+
+  return <p>Loading</p>
 }
 
 export default TBDCalendar;

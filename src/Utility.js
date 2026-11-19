@@ -1,8 +1,20 @@
+const dayLookup = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+async function getUser(userId) {
+  const ret = await fetch(`http://localhost:8080/api/user/getUser?userId=${userId}`);
+  const user = await ret.json();
+  return user;
+}
+
 // creates a hash id given a date of the form YYYYMMDD
 // date: Date object
 function hashDate(date) {
-  if (date === null) return "";
-  return `${date.getFullYear()}${date.getMonth()}${date.getDate()}`;
+  if (date === null || date === undefined) return "";
+  var dd = String(date.getDate());
+
+  if (dd.length == 1) dd = "0" + dd;
+  
+  return `${date.getFullYear()}${date.getMonth()}${dd}`;
 }
 
 // returns an array containing events on the specified date
@@ -52,4 +64,13 @@ function validTimeRange(timeRange) {
   return (start < end) && (start !== -1 && end !== -1);
 }
 
-export {getEventsOnDay, hashDate, secondsToHHMM, HHMMToSeconds, sortEventsByTimeRange, validTimeRange}
+export {
+  getEventsOnDay, 
+  hashDate, 
+  secondsToHHMM, 
+  HHMMToSeconds, 
+  sortEventsByTimeRange, 
+  validTimeRange,
+  dayLookup,
+  getUser
+}
