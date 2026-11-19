@@ -22,13 +22,10 @@ function CreatedEventsList() {
     }
 
     const toRender = [<></>];
-    var totEvents = 0;
 
     Object.entries(maybeEventsHashTable).map(([hashDate, events]) => {
       for (var i = 0; i < events.length; i++) {
         const event = events[i];
-
-        totEvents++;
 
         if (event.createdById !== user.id) continue;
 
@@ -54,7 +51,7 @@ function CreatedEventsList() {
       }
     })
 
-    if (totEvents === 0) {
+    if (toRender.length === 1) {
       return <p>None</p>;
     } else {
       toRender[0] = <small>Hover over an event to see its description</small>;
