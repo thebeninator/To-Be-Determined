@@ -17,35 +17,48 @@ function CreatedEventsList() {
     if (
       maybeEventsHashTable === null 
       || maybeEventsHashTable === undefined 
-      || Object.keys(maybeEventsHashTable).length === 0
     ) {
       return <p>None</p>;
     }
 
-    const toRender = [];
+    const toRender = [<></>];
+    var totEvents = 0;
 
     Object.entries(maybeEventsHashTable).map(([hashDate, events]) => {
       for (var i = 0; i < events.length; i++) {
         const event = events[i];
+
+        totEvents++;
+
         if (event.createdById !== user.id) continue;
 
         const hoverDescription = `From ${secondsToHHMM(event.timeRange[0])} to ${secondsToHHMM(event.timeRange[1])}\n\n`
           + `${event.description}\n`
 
+        // incoming Dates from server are 
+        // deserialized as plain text
+        const date = new Date(event.date);
+
         toRender.push(<div key={i+hashDate} >
           <button title={hoverDescription}
             onClick={() => {
-              setSelectedDate(event.date);
+              setSelectedDate(date);
               setEditingEvent(event)
               setEventName(event.name);
               setEventDescription(event.description);
               setEventTimeRange(event.timeRange);
               setEventInvites(event.invitees);
             }}
-          >{event.name} {`(${event.date.toDateString()})`}</button>
+          >{event.name} {`(${date.toDateString()})`}</button>
         </div>);
       }
     })
+
+    if (totEvents === 0) {
+      return <p>None</p>;
+    } else {
+      toRender[0] = <small>Hover over an event to see its description</small>;
+    }
 
     return toRender;
   }

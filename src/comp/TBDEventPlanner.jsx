@@ -248,7 +248,6 @@ function EventPlanner() {
 
       <div>
         <h3>Created Events</h3>
-        <small>Hover over an event to see its description</small>
         <EventPlannerContext.Provider value={createdEventsListContext}>
           <CreatedEventsList selectedDate={selectedDate} user={user} />
         </EventPlannerContext.Provider>

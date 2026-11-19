@@ -3,6 +3,7 @@ const dayLookup = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Frid
 async function getUser(userId) {
   const ret = await fetch(`http://localhost:8080/api/user/getUser?userId=${userId}`);
   const user = await ret.json();
+
   return user;
 }
 

@@ -16,7 +16,7 @@ function DaySchedule({schedule, day}) {
       if (idx != day) {
         return <DayScheduleCopyOption key={idx} targetDay={day} day={idx} setCopierActive={setCopierActive}/>
       }
-    });
+    })
   }
   
   const renderEvents = useCallback(() => {
@@ -44,7 +44,6 @@ function DaySchedule({schedule, day}) {
 
     <button 
       onClick={() => {setCopierActive(!copierActive)}}
-      onBlur={() => {setCopierActive(false)}}
     >
       Copy From
     </button>

@@ -22,6 +22,7 @@ function DayScheduleCopyOption({targetDay, day, setCopierActive}) {
     }
 
     const success = setScheduleEvents(user, targetDay, copiedEvents);
+
     if (success) {
       updateUser({...user});
       setCopierActive(false);
