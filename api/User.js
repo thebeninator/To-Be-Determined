@@ -55,7 +55,7 @@ function addEvent(user, event) {
 
     if (event.date === null || event.date === "") return false;
     if (eventStart === -1 || eventEnd === -1) return false;
-    if (eventStart > eventEnd) return false;
+    if (eventStart >= eventEnd) return false;
 
     if (user.events[hash] === null || user.events[hash] === undefined) {
       user.events[hash] = [];
