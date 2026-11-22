@@ -4,7 +4,7 @@ import { useContext, useEffect } from "react";
 import { addEvent, inFreeTimeRanges } from "../../api/User";
 import ScheduleBand from "./ScheduleBand";
 import TBDCalendarContext from "../context/TBDCalendarContext";
-import { validTimeRange } from "../Utility";
+import { getEventsOnDay, hashDate, validTimeRange } from "../Utility";
 import { UserCache } from "../UserCache";
 
 function getAvailableStyle(percentAvailable) {
@@ -14,16 +14,30 @@ function getAvailableStyle(percentAvailable) {
   return {backgroundColor: `rgba(${r}, ${g}, ${b}, 0.5)`}
 }
 
-function getPercentAvailable(user, invited, eventTimeRange, date) {
+function getPercentAvailable(user, invited, eventTimeRange, date, editingEvent) {
   var totalUsers = 1 + invited.length;
   var totalAvailable = 0;
 
-  if (inFreeTimeRanges(eventTimeRange, user, date)) {
+  const events = [...getEventsOnDay(user, date)];
+
+  if (editingEvent && editingEvent.dateHash === hashDate(date)) {
+    var idx = 0;
+
+    while (idx < events.length) {
+      if (events[idx].id === editingEvent.id) break;
+      idx++;
+    }
+
+    events.splice(idx, 1);
+  }
+
+  if (inFreeTimeRanges(eventTimeRange, events)) {
     totalAvailable++;
   }
 
   for (var i = 0; i < invited.length; i++) {
-    if (inFreeTimeRanges(eventTimeRange, UserCache[invited[i]], date)) {
+    const invitedEvents = getEventsOnDay(UserCache[invited[i].id], date);
+    if (inFreeTimeRanges(eventTimeRange, invitedEvents)) {
       totalAvailable++;
     }
   }
@@ -34,6 +48,7 @@ function getPercentAvailable(user, invited, eventTimeRange, date) {
 function DaySlot() {
   const {
     user, events, date, 
+    editingEvent,
     plannedEventTimeRange, plannedInvitees, eventPlannerActive
   } = useContext(TBDCalendarContext);
   const hasEvents = events === null || events.length === 0;
@@ -44,7 +59,7 @@ function DaySlot() {
 
   function renderAvailability() {
     if (eventPlannerActive && validTimeRange(plannedEventTimeRange)) {
-      const percent = getPercentAvailable(user, plannedInvitees, plannedEventTimeRange, date);
+      const percent = getPercentAvailable(user, plannedInvitees, plannedEventTimeRange, date, editingEvent);
       const style = getAvailableStyle(percent);
       return <p style = {style}> Availability: {percent.toLocaleString('en-US', { style: 'percent' })}</p> 
     }
@@ -57,7 +72,7 @@ function DaySlot() {
     <p style={hasEvents ? null: {backgroundColor: "yellow"}}> 
       {hasEvents ? "[No events]" : `Events: ${events.length}`}
     </p>
-    {/* {renderAvailability()} */}
+    {renderAvailability()}
   </div>
 }
 
