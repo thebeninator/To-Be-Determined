@@ -1,7 +1,7 @@
 import { hashDate } from "../Utility";
 
 class Event {
-  constructor(name, description, timeRange, invitees, date, createdById) {
+  constructor(name, description, timeRange, invitees, date, createdById, id = undefined) {
     this.name = name;
     this.description = description;
     this.timeRange = timeRange;
@@ -9,7 +9,7 @@ class Event {
     this.date = date;
     this.dateHash = hashDate(date);
     this.createdById = createdById;
-    this.id = crypto.randomUUID();
+    this.id = id ?? crypto.randomUUID();
     this.overlappingWith = [];
   }
 }

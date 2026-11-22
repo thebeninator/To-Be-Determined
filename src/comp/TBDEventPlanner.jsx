@@ -6,10 +6,10 @@ import Event from "../obj/Event";
 import { getEventsOnDay, hashDate, secondsToHHMM, validTimeRange } from "../Utility";
 import TimeRangeEntry from "./TimeRangeEntry";
 import Select from "react-select";
-import { DummyDb } from "../../api/DummyDb";
 import TBDCalendarContext from "../context/TBDCalendarContext";
 import CreatedEventsList from "./CreatedEventsList";
 import EventPlannerContext from "../context/EventPlannerContext";
+import { UserCache } from "../UserCache";
 
 const leftMargin = {
   marginLeft: "20px"
@@ -21,8 +21,8 @@ const textAreaStyle = {
   resize: "none"
 }
 
-function freeTimeRangeStringBuilder(user, date) {
-  const freeTimeRanges = findFreeRanges(user, date);
+function freeTimeRangeStringBuilder(events) {
+  const freeTimeRanges = findFreeRanges(events);
   var string = "";
 
   for (var i = 0; i < freeTimeRanges.length; i++) {
@@ -73,12 +73,26 @@ function EventPlanner() {
 
   function renderInviteeAvailability(invitees) {
     return invitees.map((userId, idx) => {
-      const invitedUser = DummyDb[userId];
+      const isUser = user.id === userId;
+      const invitedUser = UserCache[userId];
+      var events = [...getEventsOnDay(invitedUser, selectedDate)];
+      
+      if (isUser && editingEvent && editingEvent.dateHash === hashDate(selectedDate)) {
+        var idx = 0;
+
+        while (idx < events.length) {
+          if (events[idx].id === editingEvent.id) break;
+          idx++;
+        }
+
+        events.splice(idx, 1);
+      }
+
       var style = {};
       var timeConflict = false;
 
       if (
-        !inFreeTimeRanges(eventTimeRange, invitedUser, selectedDate) 
+        !inFreeTimeRanges(eventTimeRange, events) 
         && validTimeRange(eventTimeRange)
       ) {
         style={color: "red"};
@@ -86,8 +100,8 @@ function EventPlanner() {
       }
 
       return <p style={style} key={idx}>
-        {userId === user.id ? "You" : invitedUser.name}: {freeTimeRangeStringBuilder(invitedUser, selectedDate)}
-        {timeConflict ? " <<< Time Conflict" : ""}
+        {isUser ? "You" : invitedUser.name}: {freeTimeRangeStringBuilder(events)}
+        {timeConflict ? " ⟵ Time Conflict" : ""}
       </p>
     });
   }
@@ -187,7 +201,7 @@ function EventPlanner() {
               isMulti={true} 
               options={
                 user.contacts.map((userId, idx) => {
-                  return {value: userId, label: DummyDb[userId].name};
+                  return {value: userId, label: UserCache[userId].name};
                 })
               }
 
@@ -203,7 +217,7 @@ function EventPlanner() {
 
               value={
                 eventInvites.map((userId, idx) => {
-                  return {value: userId, label: DummyDb[userId].name}
+                  return {value: userId, label: UserCache[userId].name}
                 })
               }
             />

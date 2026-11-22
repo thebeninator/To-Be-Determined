@@ -47,7 +47,7 @@ function DaySchedule({schedule, day}) {
     >
       Copy From
     </button>
-    {copierActive && <>{" >> "}{renderCopierDays()}</>}
+    {copierActive && <>{" ⟶ "}{renderCopierDays()}</>}
 
     {eventCreatorActive && <DayScheduleEventCreator day={day}/>}
 

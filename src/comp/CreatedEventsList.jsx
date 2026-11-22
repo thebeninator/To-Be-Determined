@@ -54,7 +54,7 @@ function CreatedEventsList() {
     if (toRender.length === 1) {
       return <p>None</p>;
     } else {
-      toRender[0] = <small>Hover over an event to see its description</small>;
+      toRender[0] = <small key={0}>Hover over an event to see its description</small>;
     }
 
     return toRender;

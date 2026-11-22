@@ -1,11 +1,11 @@
 // renders supplementary information on a Calendar day slot
 
-import { useContext } from "react";
-import { DummyDb } from "../../api/DummyDb";
+import { useContext, useEffect } from "react";
 import { addEvent, inFreeTimeRanges } from "../../api/User";
 import ScheduleBand from "./ScheduleBand";
 import TBDCalendarContext from "../context/TBDCalendarContext";
 import { validTimeRange } from "../Utility";
+import { UserCache } from "../UserCache";
 
 function getAvailableStyle(percentAvailable) {
   const r = 255 * (1 - percentAvailable);
@@ -23,7 +23,7 @@ function getPercentAvailable(user, invited, eventTimeRange, date) {
   }
 
   for (var i = 0; i < invited.length; i++) {
-    if (inFreeTimeRanges(eventTimeRange, DummyDb[invited[i]], date)) {
+    if (inFreeTimeRanges(eventTimeRange, UserCache[invited[i]], date)) {
       totalAvailable++;
     }
   }
@@ -37,6 +37,10 @@ function DaySlot() {
     plannedEventTimeRange, plannedInvitees, eventPlannerActive
   } = useContext(TBDCalendarContext);
   const hasEvents = events === null || events.length === 0;
+
+  useEffect(() => {
+    
+  }, [events]);
 
   function renderAvailability() {
     if (eventPlannerActive && validTimeRange(plannedEventTimeRange)) {
@@ -53,7 +57,7 @@ function DaySlot() {
     <p style={hasEvents ? null: {backgroundColor: "yellow"}}> 
       {hasEvents ? "[No events]" : `Events: ${events.length}`}
     </p>
-    {renderAvailability()}
+    {/* {renderAvailability()} */}
   </div>
 }
 

@@ -1,7 +1,7 @@
 // renders the events and their details for currently
 // selected Calendar day
 
-import { DummyDb } from "../../api/DummyDb";
+import { UserCache } from "../UserCache";
 import { getEventsOnDay, secondsToHHMM, sortEventsByTimeRange } from "../Utility";
 
 const eventStyle = {
@@ -13,7 +13,7 @@ function inviteeStringBuilder(invitees) {
   var string = "";
 
   for (var i = 0; i < invitees.length; i++) {
-    string += DummyDb[invitees[i]].name;
+    string += UserCache[invitees[i]].name;
 
     if (i != invitees.length - 1) {
       string += ", ";

@@ -4,12 +4,12 @@ import Calendar from "react-calendar";
 import DaySlot from "./DaySlot";
 import { createContext, useEffect, useLayoutEffect, useState } from "react";
 import { getEventsOnDay, getUser, hashDate } from "../Utility";
-import {DummyUser} from "../../api/DummyDb";
 import TBDDayInspector from "./TBDDayInspector";
 import TBDEventPlanner from "./TBDEventPlanner";
 import TBDCalendarContext from "../context/TBDCalendarContext";
 import TBDScheduler from "./TBDScheduler";
 import { update } from "three/examples/jsm/libs/tween.module.js";
+import { AddToCache, UserCache } from "../UserCache";
 
 const MONTHS = [
   "January", "February", "March", 
@@ -47,12 +47,16 @@ function TBDCalendar() {
   }
 
   useLayoutEffect(() => {
-    var date = new Date();
-    setMonth(date.getMonth());
-    setYear(date.getFullYear());
-
     async function acquirePrimaryUser() {
       const primaryUser = await getUser("user1");
+
+      AddToCache(primaryUser);
+
+      for (var i = 0; i < primaryUser.contacts.length; i++) {
+        const contact = await getUser(primaryUser.contacts[i]);
+        AddToCache(contact);
+      }
+
       updateUser(primaryUser);
     }
     acquirePrimaryUser();
@@ -72,10 +76,6 @@ function TBDCalendar() {
   if (user) {
     return (<>   
       <div style={{padding: "80px"}}>
-        <h1>
-          {MONTHS[month]}, {year}
-        </h1>
-
         <Calendar
           // showNavigation = {false} // TODO: custom nav
           maxDetail="month"
