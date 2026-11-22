@@ -23,7 +23,7 @@ Server should start on port 8000
 
 <br>
 
-**Frontend (do not run on the same terminal as the server)**
+**Frontend (do NOT run on the same terminal as the server)**
 
 `npm install` (if dependencies haven't been installed yet; this is separate from the server)
 
