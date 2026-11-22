@@ -15,7 +15,7 @@ Run the following in your local project (the following is for a Windows machine)
 
 `cd server`
 
-`npm install` (if dependencies haven't been installed yet)
+`npm install` (if dependencies haven't been installed yet; this is separate from the frontend)
 
 `npm run dev`
 
