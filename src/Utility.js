@@ -38,6 +38,9 @@ function getEventsOnDay(user, date) {
 // converts seconds to HH:MM format
 // sec: int
 function secondsToHHMM(sec) {
+  if (sec === -1) {
+    return "";
+  }
   return new Date(sec * 1000).toISOString().slice(11, 16);
 }
 
