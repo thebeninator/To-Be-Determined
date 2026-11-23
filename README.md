@@ -19,7 +19,7 @@ Run the following in your local project (the following is for a Windows machine)
 
 `npm run dev`
 
-Server should start on port 8000
+Server should start on port 8080
 
 <br>
 
