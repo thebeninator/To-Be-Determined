@@ -17,6 +17,7 @@ const fixWidthLeftMarginHour = {marginLeft: "20px", ...fixWidthHour};
 
 function TimeRangeEntry({timeRange, idx, setEventTimeRange}) {
   const seconds = timeRange[idx];
+  const [focused, setFocused] = useState(false);
   const [hour, setHour] = useState("");
   const [minute, setMinute] = useState("");
 
@@ -83,7 +84,11 @@ function TimeRangeEntry({timeRange, idx, setEventTimeRange}) {
 
       onBlur={() => {
         // make single digit minutes two digits, ex: convert 1 to 01 
+        setFocused(false);
         if (minute.length == 1) setMinute(prev => "0" + prev);
+      }}
+      onFocus={() => {
+        setFocused(true);
       }}
     />     
   </>)

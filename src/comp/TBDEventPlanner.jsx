@@ -75,7 +75,8 @@ function EventPlanner() {
     return invitees.map((userId, idx) => {
       const isUser = user.id === userId;
       const invitedUser = UserCache[userId];
-      var events = [...getEventsOnDay(invitedUser, selectedDate)];
+      const [datedEvents, scheduleEvents] = getEventsOnDay(invitedUser, selectedDate);
+      var events = [...datedEvents, ...scheduleEvents];
       
       if (isUser && editingEvent && editingEvent.dateHash === hashDate(selectedDate)) {
         var idx = 0;
@@ -107,7 +108,7 @@ function EventPlanner() {
   }
 
   function tryDeleteEvent() {
-    const success = deleteEvent(user, editingEvent);
+    const success = deleteEvent(user.id, editingEvent);
     if (success) {
       updateUser({...user});
       setEditingEvent(null);
@@ -149,7 +150,7 @@ function EventPlanner() {
       user.id
     );
     
-    const success = editingEvent !== null ? updateEvent(user, editingEvent, event) : addEvent(user, event);
+    const success = editingEvent !== null ? updateEvent(user.id, editingEvent, event) : addEvent(user.id, event);
     if (success) {
       updateUser({...user});
       setEditingEvent(null);

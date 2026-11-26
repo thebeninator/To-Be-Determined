@@ -36,13 +36,17 @@ function renderEvents(events, user) {
           : {event.name === "" ? "Unnamed Event" : event.name}
         </h4>
 
-        <p>Invitees: {(() => {
-          const list = inviteeStringBuilder(event.invitees);
-          if (list === "") return "None";
-          return list;
-        })()}</p>
-        
-        <p>Created by: {user.id === event.createdById ? "You" : event.createdById}</p>     
+        {event.scheduleEvent && 
+          <>
+            <p>Invitees: {(() => {
+              const list = inviteeStringBuilder(event.invitees);
+              if (list === "") return "None";
+              return list;
+            })()}</p>
+            
+            <p>Created by: {user.id === event.createdById ? "You" : event.createdById}</p>     
+          </>
+        || <small>This is from your schedule for this day</small>}
 
         <p style={{whiteSpace: "pre-line"}}>
           {event.description === "" ? "No description provided" : event.description}
@@ -53,7 +57,8 @@ function renderEvents(events, user) {
 }
 
 function TBDDayInspector({date, user}) {
-  const events = getEventsOnDay(user, date);
+  const [datedEvents, scheduleEvents] = getEventsOnDay(user, date);
+  const events = [...datedEvents, ...scheduleEvents];
 
   return (<div>
     {date === null ? 
@@ -64,7 +69,7 @@ function TBDDayInspector({date, user}) {
 
       <div>
         <h3>Events</h3>
-        {events === null || events.length === 0 ? "No events" : renderEvents(events, user)}
+        {!events || events.length === 0 ? "No events" : renderEvents(events, user)}
       </div>
     </>}
   </div>);

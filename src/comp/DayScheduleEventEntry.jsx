@@ -9,7 +9,7 @@ function DayScheduleEventEntry({user, day, event}) {
   const {updateUser} = useContext(TBDCalendarContext);
 
   function tryDeleteEvent() {
-    const success = removeFromSchedule(user, day, event);
+    const success = removeFromSchedule(user.id, day, event);
     if (success) {
       updateUser({...user});
     };     

@@ -65,7 +65,7 @@ function TBDCalendar() {
   useEffect(() => {
     if (selectedDate === null) return;
     if (!user) return;
-    const events = getEventsOnDay(user, selectedDate);
+    const [events] = getEventsOnDay(user, selectedDate);
     setSelectedDateEvents(events);
   }, [user]);
 
@@ -82,7 +82,7 @@ function TBDCalendar() {
           showNeighboringMonth = {false}
           tileContent = {({view, date}) => {
             if (view === 'month') {
-              const events = getEventsOnDay(user, date);
+              const [events] = getEventsOnDay(user, date);
 
               return (
                 <TBDCalendarContext.Provider value={{date, events, ...daySlotContext}}>
@@ -101,7 +101,7 @@ function TBDCalendar() {
             // if (eventPlannerActive) sameDate = false;
           
             setSelectedDate(date);
-            setSelectedDateEvents(getEventsOnDay(user, date));
+            setSelectedDateEvents(getEventsOnDay(user, date)[0]);
           }}
         />
       </div>

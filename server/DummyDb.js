@@ -55,12 +55,12 @@ var DummyContact1 = {
 
   weeklySchedule: [
     new Schedule(), // sunday
-    new Schedule([new Event("", "", [54000, 61200], [], null, "")]), // monday
-    new Schedule([new Event("", "", [54000, 61200], [], null, "")]), // tuesday
-    new Schedule([new Event("", "", [54000, 61200], [], null, "")]), // wednesday
-    new Schedule([new Event("", "", [54000, 61200], [], null, "")]), // thursday
-    new Schedule([new Event("", "", [54000, 61200], [], null, "")]), // friday
-    new Schedule([new Event("", "", [54000, 61200], [], null, "")]), // saturday
+    new Schedule([new Event("", "", [54000, 61200], [], null, "", true)]), // monday
+    new Schedule([new Event("", "", [54000, 61200], [], null, "", true)]), // tuesday
+    new Schedule([new Event("", "", [54000, 61200], [], null, "", true)]), // wednesday
+    new Schedule([new Event("", "", [54000, 61200], [], null, "", true)]), // thursday
+    new Schedule([new Event("", "", [54000, 61200], [], null, "", true)]), // friday
+    new Schedule([new Event("", "", [54000, 61200], [], null, "", true)]), // saturday
   ],
 
   contacts: []
@@ -73,7 +73,7 @@ var DummyContact2 = {
 
   weeklySchedule: [
     new Schedule(), // sunday
-    new Schedule([new Event("", "", [0, 86340], [], null, "")]), // monday
+    new Schedule([new Event("", "", [0, 86340], [], null, "", true)]), // monday
     new Schedule(), // tuesday
     new Schedule(), // wednesday
     new Schedule(), // thursday

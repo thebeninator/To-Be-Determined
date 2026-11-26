@@ -1,7 +1,7 @@
 const { hashDate } = require("../Utility.js");
 
 class Event {
-  constructor(name, description, timeRange, invitees, date, createdById) {
+  constructor(name, description, timeRange, invitees, date, createdById, scheduleEvent = false) {
     this.name = name;
     this.description = description;
     this.timeRange = timeRange;
@@ -11,6 +11,7 @@ class Event {
     this.createdById = createdById;
     this.id = crypto.randomUUID();
     this.overlappingWith = [];
+    this.scheduleEvent = scheduleEvent;
   }
 }
 

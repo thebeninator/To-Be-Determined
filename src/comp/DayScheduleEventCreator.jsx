@@ -43,10 +43,11 @@ function DayScheduleEventCreator({day}) {
       eventTimeRange,
       [],
       null,
-      user.id
+      user.id,
+      true,
     );
     
-    const success = addToSchedule(user, day, event);
+    const success = addToSchedule(user.id, day, event);
     if (success) {
       updateUser({...user});
       clearEvent();

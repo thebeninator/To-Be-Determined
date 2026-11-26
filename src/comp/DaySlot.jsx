@@ -17,8 +17,9 @@ function getAvailableStyle(percentAvailable) {
 function getPercentAvailable(user, invited, eventTimeRange, date, editingEvent) {
   var totalUsers = 1 + invited.length;
   var totalAvailable = 0;
+  const [datedEvents, scheduleEvents] = getEventsOnDay(user, date);
 
-  const events = [...getEventsOnDay(user, date)];
+  const events = [...datedEvents, ...scheduleEvents];
 
   if (editingEvent && editingEvent.dateHash === hashDate(date)) {
     var idx = 0;
@@ -36,7 +37,9 @@ function getPercentAvailable(user, invited, eventTimeRange, date, editingEvent) 
   }
 
   for (var i = 0; i < invited.length; i++) {
-    const invitedEvents = getEventsOnDay(UserCache[invited[i].id], date);
+    const [invitedDatedEvents, invitedScheduleEvents] = getEventsOnDay(UserCache[invited[i]], date);
+    const invitedEvents = [...invitedDatedEvents, ...invitedScheduleEvents];
+
     if (inFreeTimeRanges(eventTimeRange, invitedEvents)) {
       totalAvailable++;
     }
@@ -51,7 +54,7 @@ function DaySlot() {
     editingEvent,
     plannedEventTimeRange, plannedInvitees, eventPlannerActive
   } = useContext(TBDCalendarContext);
-  const hasEvents = events === null || events.length === 0;
+  const hasEvents = !events || events.length === 0;
 
   useEffect(() => {
     
@@ -70,7 +73,7 @@ function DaySlot() {
   return <div>
     <ScheduleBand color={user.weeklySchedule[date.getDay()].colour}/>
     <p style={hasEvents ? null: {backgroundColor: "yellow"}}> 
-      {hasEvents ? "[No events]" : `Events: ${events.length}`}
+      {hasEvents ? "[No events]" : `Events: ${events.length ?? 0}`}
     </p>
     {renderAvailability()}
   </div>

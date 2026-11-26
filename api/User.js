@@ -1,7 +1,9 @@
+import { UserCache } from "../src/UserCache";
 import { getEventsOnDay, sortEventsByTimeRange } from "../src/Utility";
 
-function setScheduleEvents(user, day, events) {
+function setScheduleEvents(userId, day, events) {
   try {
+    const user = UserCache[userId];
     user.weeklySchedule[day].events = events;
 
     return true;
@@ -11,8 +13,9 @@ function setScheduleEvents(user, day, events) {
   }
 }
 
-function addToSchedule(user, day, event) {
+function addToSchedule(userId, day, event) {
   try {
+    const user = UserCache[userId];
     user.weeklySchedule[day].events.push(event);
 
     return true;
@@ -22,8 +25,9 @@ function addToSchedule(user, day, event) {
   }
 }
 
-function removeFromSchedule(user, day, event) {
+function removeFromSchedule(userId, day, event) {
   try {
+    const user = UserCache[userId];
     var idx = -1;
     for (var i = 0; i < user.weeklySchedule[day].events.length; i++) {
       if (user.weeklySchedule[day].events[i].id === event.id) {
@@ -46,10 +50,11 @@ function removeFromSchedule(user, day, event) {
 // user: User object
 // event: Event to be added
 // returns true if event was successfully added, false otherwise
-function addEvent(user, event) {
+function addEvent(userId, event) {
   try {
     // note: this should attempt to update the DB before
     // making these changes locally
+    const user = UserCache[userId];
     const [eventStart, eventEnd] = event.timeRange;
     const hash = event.dateHash;
 
@@ -73,12 +78,12 @@ function addEvent(user, event) {
 // user: User object
 // event: Event to be updated
 // returns true if event was successfully updated, false otherwise
-function updateEvent(user, oldEvent, newEvent) {
+function updateEvent(userId, oldEvent, newEvent) {
   try {
     // note: this should attempt to update the DB before
     // making these changes locally
-    deleteEvent(user, oldEvent);
-    addEvent(user, newEvent);
+    deleteEvent(userId, oldEvent);
+    addEvent(userId, newEvent);
 
     return true;
   } catch (exception) {
@@ -90,11 +95,12 @@ function updateEvent(user, oldEvent, newEvent) {
 // user: User object
 // event: Event to be deleted
 // returns true if event was successfully deleted, false otherwise
-function deleteEvent(user, event) {
+function deleteEvent(userId, event) {
   try {
     // note: this should attempt to update the DB before
     // making these changes locally
     const hash = event.dateHash;
+    const user = UserCache[userId];
 
     if (!(hash in user.events)) return false;
 
@@ -170,9 +176,7 @@ function findFreeRanges(...args) {
     if (args.length == 2) {
       const user = args[0];
       const date = args[1];
-      const daySchedule = user.weeklySchedule[date.getDay()];
-      const scheduleEvents = daySchedule.events;
-      const datedEvents = getEventsOnDay(user, date);
+      const [datedEvents, scheduleEvents] = getEventsOnDay(user, date);
       busyRanges = [...scheduleEvents, ...datedEvents];
     } else if (args.length == 1) {
       busyRanges = args[0];

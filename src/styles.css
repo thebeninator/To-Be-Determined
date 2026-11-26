@@ -17,6 +17,18 @@ font-size: 25px
 font-size: 25px
 }
 
+.react-calendar__year-view__months__month {
+font-size: 25px
+}
+
+.react-calendar__decade-view__years__year {
+font-size: 25px
+}
+
+.react-calendar__century-view__decades__decade {
+font-size: 25px   
+}
+
 button {
 background-color: white;
 border-color: black;

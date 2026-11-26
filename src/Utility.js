@@ -24,14 +24,15 @@ function hashDate(date) {
 function getEventsOnDay(user, date) {
   try {
     const maybeDayKey = hashDate(date);
-    const keyExists = maybeDayKey in user.events;
 
-    if (!keyExists) return [];
+    // mon..sun
+    const day = date.getDay();
+    var maybeDatedEvents = [];
 
-    return user.events[maybeDayKey];
+    return [user.events[maybeDayKey] ?? [], user.weeklySchedule[day].events ?? []];
   } catch (exception) {
     console.error(exception.message);
-    return [];
+    return [[], []];
   }
 }
 
