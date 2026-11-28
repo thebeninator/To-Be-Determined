@@ -48,31 +48,29 @@ function getPercentAvailable(user, invited, eventTimeRange, date, editingEvent) 
   return (totalAvailable / totalUsers);
 }
 
-function DaySlot({user, events, date}) {
+const DaySlot = memo(function DaySlot({user, events, date}) {
   const {
     editingEvent, eventPlannerActive,
     plannedEventTimeRange, plannedInvitees
   } = useContext(TBDCalendarContext);
-  
   const hasEvents = !events || events.length === 0;
   const currTotEvents = useRef(events.length ?? 0);
   const ref = useRef();
   
   useEffect(() => {
-    const [currDatedEvents] = getEventsOnDay(user, date);
-
-    if (currDatedEvents.length > currTotEvents.current) {
+    if (events.length > currTotEvents.current) {
       ref.current.className = "new-event-added";
       setTimeout(() => { ref.current.className = "" }, 1200);
     }
 
-    if (currDatedEvents.length < currTotEvents.current) {
+    if (events.length < currTotEvents.current) {
       ref.current.className = "event-deleted";
-      setTimeout(() => { ref.current.className = "" }, 1200);
+      setTimeout(() => { ref.current.className = "" }, 1200);   
     }
 
-    currTotEvents.current = currDatedEvents.length;
-  }, [user]);
+    currTotEvents.current = events.length;
+
+  }, [events.length]);
 
   function renderAvailability() {
     if (eventPlannerActive && validTimeRange(plannedEventTimeRange)) {
@@ -91,6 +89,8 @@ function DaySlot({user, events, date}) {
     </p>
     {renderAvailability()}
   </div>
-}
+}, (prevProps, nextProps) => {
+  return prevProps.events.length === nextProps.events.length;
+});
 
 export default DaySlot;

@@ -84,7 +84,6 @@ var DummyContact2 = {
   contacts: []
 };
 
-// create clones to imitate a non-local database
 var DummyDb = {
   ["user1"]: {...DummyUser},
   ["user2"]: {...DummyContact1},

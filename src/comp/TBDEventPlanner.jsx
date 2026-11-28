@@ -25,6 +25,8 @@ function freeTimeRangeStringBuilder(events) {
   const freeTimeRanges = findFreeRanges(events);
   var string = "";
 
+  if (freeTimeRanges.length <= 0) { return "Not available on this date" }
+
   for (var i = 0; i < freeTimeRanges.length; i++) {
     const [start, end] = freeTimeRanges[i];
   
