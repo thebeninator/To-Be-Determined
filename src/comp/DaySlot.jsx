@@ -53,6 +53,7 @@ function DaySlot({user, events, date}) {
     editingEvent, eventPlannerActive,
     plannedEventTimeRange, plannedInvitees
   } = useContext(TBDCalendarContext);
+  
   const hasEvents = !events || events.length === 0;
   const currTotEvents = useRef(events.length ?? 0);
   const ref = useRef();
@@ -62,12 +63,12 @@ function DaySlot({user, events, date}) {
 
     if (currDatedEvents.length > currTotEvents.current) {
       ref.current.className = "new-event-added";
-      setTimeout(() => { ref.current.className = "" }, 1000);
+      setTimeout(() => { ref.current.className = "" }, 1200);
     }
 
     if (currDatedEvents.length < currTotEvents.current) {
       ref.current.className = "event-deleted";
-      setTimeout(() => { ref.current.className = "" }, 1000);
+      setTimeout(() => { ref.current.className = "" }, 1200);
     }
 
     currTotEvents.current = currDatedEvents.length;

@@ -35,13 +35,13 @@ transition: background-color 0.3s ease-out
 }
 
 .react-calendar__tile:has(.new-event-added) {
-background-color: rgba(0, 255, 0, 75%);
-transition: background-color 1s ease-out
+background-color: rgba(0, 240, 0, 66%);
+transition: background-color 1.2s ease-in-out
 }
 
 .react-calendar__tile:has(.event-deleted) {
-background-color: rgba(255, 0, 0, 75%);
-transition: background-color 1s ease-out
+background-color: rgba(240, 0, 0, 66%);
+transition: background-color 1.2s ease-in-out
 }
 
 button {
