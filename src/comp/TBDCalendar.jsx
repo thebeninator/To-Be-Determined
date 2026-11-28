@@ -85,13 +85,21 @@ function TBDCalendar() {
               const [events] = getEventsOnDay(user, date);
 
               return (
-                <TBDCalendarContext.Provider value={{date, events, ...daySlotContext}}>
-                  <DaySlot />
+                <TBDCalendarContext.Provider value={{...daySlotContext}}>
+                  <DaySlot user={user} date={date} events={events}/>
                 </TBDCalendarContext.Provider>
               )
             }
 
             return null;
+          }}
+
+          tileClassName={({activeStartDate, date, view}) => {
+            if (selectedDate.toDateString() === date.toDateString()) {
+              return "day-selected";
+            }
+
+            return "";
           }}
 
           onClickDay = {(date) => {

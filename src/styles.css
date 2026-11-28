@@ -29,6 +29,21 @@ font-size: 25px
 font-size: 25px   
 }
 
+.day-selected:not(.new-event-added) {
+background-color: rgb(210, 210, 210);
+transition: background-color 0.3s ease-out
+}
+
+.react-calendar__tile:has(.new-event-added) {
+background-color: rgba(0, 255, 0, 75%);
+transition: background-color 1s ease-out
+}
+
+.react-calendar__tile:has(.event-deleted) {
+background-color: rgba(255, 0, 0, 75%);
+transition: background-color 1s ease-out
+}
+
 button {
 background-color: white;
 border-color: black;
@@ -37,5 +52,5 @@ border-width: 1px;
 }
 
 button:hover {
-background-color: lightgrey; /* Darker blue on hover */
+background-color: rgb(235, 235, 235);
 }

@@ -1,6 +1,6 @@
 // renders supplementary information on a Calendar day slot
 
-import { useContext, useEffect } from "react";
+import { memo, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { addEvent, inFreeTimeRanges } from "../../api/User";
 import ScheduleBand from "./ScheduleBand";
 import TBDCalendarContext from "../context/TBDCalendarContext";
@@ -48,17 +48,30 @@ function getPercentAvailable(user, invited, eventTimeRange, date, editingEvent) 
   return (totalAvailable / totalUsers);
 }
 
-function DaySlot() {
+function DaySlot({user, events, date}) {
   const {
-    user, events, date, 
-    editingEvent,
-    plannedEventTimeRange, plannedInvitees, eventPlannerActive
+    editingEvent, eventPlannerActive,
+    plannedEventTimeRange, plannedInvitees
   } = useContext(TBDCalendarContext);
   const hasEvents = !events || events.length === 0;
-
+  const currTotEvents = useRef(events.length ?? 0);
+  const ref = useRef();
+  
   useEffect(() => {
-    
-  }, [events]);
+    const [currDatedEvents] = getEventsOnDay(user, date);
+
+    if (currDatedEvents.length > currTotEvents.current) {
+      ref.current.className = "new-event-added";
+      setTimeout(() => { ref.current.className = "" }, 1000);
+    }
+
+    if (currDatedEvents.length < currTotEvents.current) {
+      ref.current.className = "event-deleted";
+      setTimeout(() => { ref.current.className = "" }, 1000);
+    }
+
+    currTotEvents.current = currDatedEvents.length;
+  }, [user]);
 
   function renderAvailability() {
     if (eventPlannerActive && validTimeRange(plannedEventTimeRange)) {
@@ -70,7 +83,7 @@ function DaySlot() {
     return <p>Availability: N/A</p>
   }
 
-  return <div>
+  return <div ref={ref}>
     <ScheduleBand color={user.weeklySchedule[date.getDay()].colour}/>
     <p style={hasEvents ? null: {backgroundColor: "yellow"}}> 
       {hasEvents ? "[No events]" : `Events: ${events.length ?? 0}`}
